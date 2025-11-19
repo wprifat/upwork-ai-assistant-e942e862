@@ -1,3 +1,4 @@
+import { useScrollToHash } from "@/hooks/useScrollToHash";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import HeroSection from "@/components/Home/HeroSection";
@@ -10,6 +11,7 @@ import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const Index = () => {
   useSmoothScroll();
+  useScrollToHash();
   
   return <div className="min-h-screen flex flex-col">
       <Header />
