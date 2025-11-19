@@ -69,32 +69,12 @@ const handler = async (req: Request): Promise<Response> => {
                 text-align: center;
                 border-radius: 12px 12px 0 0;
               }
-              .logo-container {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-              }
-              .logo {
-                width: 40px;
-                height: 40px;
-                background-color: #ffffff;
-                border-radius: 8px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-              }
-              .logo-text {
-                color: #6FBF73;
-                font-size: 24px;
-                font-weight: bold;
-                line-height: 1;
-              }
               .brand-name {
                 color: #ffffff;
-                font-size: 22px;
+                font-size: 32px;
                 font-weight: 700;
                 margin: 0;
-                line-height: 1;
+                line-height: 1.2;
               }
               .email-body {
                 padding: 40px 30px;
@@ -148,12 +128,7 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="email-wrapper">
               <!-- Header with Logo -->
               <div class="email-header">
-                <div class="logo-container">
-                  <div class="logo">
-                    <span class="logo-text">U</span>
-                  </div>
-                  <span class="brand-name">UpAssistify</span>
-                </div>
+                <h1 class="brand-name">UpAssistify</h1>
               </div>
               
               <!-- Email Body -->

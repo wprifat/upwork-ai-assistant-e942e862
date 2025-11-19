@@ -152,8 +152,8 @@ const EmailNewsletter = () => {
           {/* Preview Info */}
           <div className="p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
-              <strong>Email Design:</strong> Your newsletter will include the UpAssistify logo at the top, 
-              followed by your message content in a professional layout.
+              <strong>Email Design:</strong> Your newsletter will be displayed in a professional layout 
+              with a green header followed by your message content.
             </p>
           </div>
 
