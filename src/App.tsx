@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfileCreate from "./pages/ProfileCreate";
 import Checkout from "./pages/Checkout";
+import CheckoutComplete from "./pages/CheckoutComplete";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/complete" element={<CheckoutComplete />} />
           <Route 
             path="/dashboard" 
             element={
