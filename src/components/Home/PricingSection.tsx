@@ -66,7 +66,7 @@ const PricingSection = () => {
             <div className="mb-6">
               <h3 className="font-heading font-bold text-2xl mb-2">Monthly Plan</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold text-foreground">$19</span>
+                <span className="text-5xl font-bold text-foreground">$5</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
               <p className="text-muted-foreground mt-2">Flexible monthly subscription</p>
