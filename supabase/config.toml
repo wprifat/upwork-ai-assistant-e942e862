@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.create-payment-intent]
 verify_jwt = false
+
+[functions.send-profile-welcome]
+verify_jwt = false
