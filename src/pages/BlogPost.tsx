@@ -3,19 +3,27 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
-import { Loader2, Calendar, ArrowLeft, Share2, Twitter, Linkedin, Facebook, Clock } from "lucide-react";
+import { Loader2, Calendar, ArrowLeft, Share2, Twitter, Linkedin, Facebook, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
 
 interface BlogPostData {
+  id: string;
   title: string;
+  slug: string;
   body: string;
   feature_image: string | null;
   seo_title: string | null;
   meta_description: string | null;
   created_at: string;
+  published_at: string;
   author_id: string | null;
+}
+
+interface AdjacentPost {
+  title: string;
+  slug: string;
 }
 
 const BlogPost = () => {
@@ -24,6 +32,8 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [previousPost, setPreviousPost] = useState<AdjacentPost | null>(null);
+  const [nextPost, setNextPost] = useState<AdjacentPost | null>(null);
 
   useEffect(() => {
     if (slug) {
@@ -48,7 +58,7 @@ const BlogPost = () => {
     try {
       const { data, error } = await supabase
         .from("blog_posts")
-        .select("title, body, feature_image, seo_title, meta_description, created_at, author_id")
+        .select("id, title, slug, body, feature_image, seo_title, meta_description, created_at, published_at, author_id")
         .eq("slug", slug)
         .eq("published", true)
         .single();
@@ -61,10 +71,45 @@ const BlogPost = () => {
       }
 
       setPost(data);
+      
+      // Fetch adjacent posts
+      if (data) {
+        await fetchAdjacentPosts(data.published_at);
+      }
     } catch (error) {
       console.error("Error fetching post:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAdjacentPosts = async (currentPublishedAt: string) => {
+    try {
+      // Get previous post (older)
+      const { data: prevData } = await supabase
+        .from("blog_posts")
+        .select("title, slug")
+        .eq("published", true)
+        .lt("published_at", currentPublishedAt)
+        .order("published_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      setPreviousPost(prevData);
+
+      // Get next post (newer)
+      const { data: nextData } = await supabase
+        .from("blog_posts")
+        .select("title, slug")
+        .eq("published", true)
+        .gt("published_at", currentPublishedAt)
+        .order("published_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      setNextPost(nextData);
+    } catch (error) {
+      console.error("Error fetching adjacent posts:", error);
     }
   };
 
@@ -272,6 +317,49 @@ const BlogPost = () => {
                       </Link>
                     </div>
                   </div>
+
+                  {/* Post Navigation */}
+                  {(previousPost || nextPost) && (
+                    <nav className="mt-16 pt-12 border-t border-border">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Previous Post */}
+                        <div className={previousPost ? "" : "md:col-start-2"}>
+                          {previousPost && (
+                            <Link 
+                              to={`/blog/${previousPost.slug}`}
+                              className="group block p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-card transition-all"
+                            >
+                              <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
+                                <ChevronLeft className="h-4 w-4" />
+                                <span className="font-medium">Previous Article</span>
+                              </div>
+                              <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                {previousPost.title}
+                              </h4>
+                            </Link>
+                          )}
+                        </div>
+
+                        {/* Next Post */}
+                        <div>
+                          {nextPost && (
+                            <Link 
+                              to={`/blog/${nextPost.slug}`}
+                              className="group block p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-card transition-all text-right"
+                            >
+                              <div className="flex items-center justify-end gap-3 text-sm text-muted-foreground mb-2">
+                                <span className="font-medium">Next Article</span>
+                                <ChevronRight className="h-4 w-4" />
+                              </div>
+                              <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                {nextPost.title}
+                              </h4>
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </nav>
+                  )}
                 </article>
               </div>
             </div>
