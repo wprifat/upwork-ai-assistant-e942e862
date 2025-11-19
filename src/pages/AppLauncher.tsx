@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Loader2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
@@ -59,10 +59,6 @@ const AppLauncher = () => {
     setIframeKey(prev => prev + 1);
   };
 
-  const handleOpenInNewTab = () => {
-    window.open('https://upa.webworkmedia.net/', '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header with back button */}
@@ -77,17 +73,6 @@ const AppLauncher = () => {
           Back to Dashboard
         </Button>
         <h1 className="text-lg font-semibold">UpAssistify</h1>
-        {!loading && !error && (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleOpenInNewTab}
-            className="ml-auto gap-2"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Open in New Tab
-          </Button>
-        )}
       </div>
 
       {/* Content area */}
@@ -122,10 +107,6 @@ const AppLauncher = () => {
               </Alert>
               
               <div className="flex flex-col gap-3">
-                <Button onClick={handleOpenInNewTab} className="gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  Open UpAssistify in New Tab
-                </Button>
                 <Button onClick={handleRetry} variant="outline">
                   Try Again
                 </Button>
