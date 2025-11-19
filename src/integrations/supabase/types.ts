@@ -113,6 +113,42 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_newsletters: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          error_message: string | null
+          id: string
+          message: string
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          error_message?: string | null
+          id?: string
+          message: string
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          error_message?: string | null
+          id?: string
+          message?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       user_activity_logs: {
         Row: {
           activity_details: Json | null
