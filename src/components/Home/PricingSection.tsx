@@ -145,9 +145,15 @@ const PricingSection = () => {
                   ${pricing.monthly?.current_price || 97}
                 </span>
                 <span className="text-muted-foreground">/month</span>
+                {pricing.monthly?.discount_percentage ? (
+                  <span className="text-muted-foreground line-through text-2xl">
+                    ${pricing.monthly?.base_price}
+                  </span>
+                ) : null}
               </div>
               <p className="text-muted-foreground mt-2">
                 Flexible monthly subscription
+                {pricing.monthly?.discount_percentage ? ` • ${pricing.monthly.discount_percentage}% off` : ""}
                 {pricing.monthly?.discount_percentage ? ` • ${pricing.monthly.discount_percentage}% off` : ""}
               </p>
             </div>
