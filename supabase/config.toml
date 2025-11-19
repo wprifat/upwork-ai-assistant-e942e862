@@ -1,1 +1,7 @@
 project_id = "vzhympxsxzerubkribos"
+
+[functions.create-lifetime-checkout]
+verify_jwt = false
+
+[functions.create-monthly-checkout]
+verify_jwt = false
