@@ -23,8 +23,10 @@ export type Database = {
           full_name: string | null
           hourly_rate: number | null
           id: string
+          plan_type: Database["public"]["Enums"]["plan_type"]
           portfolio: string | null
           skills: string[] | null
+          subscription_end_date: string | null
           title: string | null
           updated_at: string
           upwork_url: string | null
@@ -37,8 +39,10 @@ export type Database = {
           full_name?: string | null
           hourly_rate?: number | null
           id: string
+          plan_type?: Database["public"]["Enums"]["plan_type"]
           portfolio?: string | null
           skills?: string[] | null
+          subscription_end_date?: string | null
           title?: string | null
           updated_at?: string
           upwork_url?: string | null
@@ -51,8 +55,10 @@ export type Database = {
           full_name?: string | null
           hourly_rate?: number | null
           id?: string
+          plan_type?: Database["public"]["Enums"]["plan_type"]
           portfolio?: string | null
           skills?: string[] | null
+          subscription_end_date?: string | null
           title?: string | null
           updated_at?: string
           upwork_url?: string | null
@@ -67,7 +73,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      plan_type: "free" | "lifetime" | "monthly"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -194,6 +200,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      plan_type: ["free", "lifetime", "monthly"],
+    },
   },
 } as const

@@ -1,24 +1,73 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Rocket, CreditCard, UserCircle, HelpCircle } from "lucide-react";
+import { Rocket, CreditCard, UserCircle, HelpCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  
-  // Mock data - replace with actual user data later
-  const userPlan = "lifetime"; // or "monthly"
-  const renewalDate = "March 15, 2025";
-  const userName = user?.user_metadata?.full_name || "User";
-  const userEmail = user?.email || "";
-  const userNiche = "Full-Stack Development"; // Mock - get from profile later
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching profile:', error);
+          toast.error('Failed to load profile data');
+        } else {
+          setProfile(data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleLaunchApp = () => {
     console.log("Launching UpAssistify...");
     // TODO: Implement actual app launch
   };
+
+  // Format subscription end date
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return null;
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const userPlan = profile?.plan_type || 'free';
+  const renewalDate = formatDate(profile?.subscription_end_date);
+  const userName = profile?.full_name || user?.user_metadata?.full_name || "User";
+  const userEmail = user?.email || "";
+  const userNiche = profile?.title || "Not set";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -75,11 +124,19 @@ const Dashboard = () => {
                       <p className="text-3xl font-bold text-primary mb-2">Lifetime Access</p>
                       <p className="text-muted-foreground">You have unlimited access to UpAssistify</p>
                     </div>
-                  ) : (
+                  ) : userPlan === "monthly" ? (
                     <div className="text-center py-8">
                       <p className="text-xl font-semibold mb-2">Monthly Subscription</p>
                       <p className="text-muted-foreground">Your subscription renews on:</p>
-                      <p className="text-2xl font-bold text-primary mt-2">{renewalDate}</p>
+                      <p className="text-2xl font-bold text-primary mt-2">{renewalDate || "Not available"}</p>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-2xl font-semibold mb-2">Free Plan</p>
+                      <p className="text-muted-foreground mb-4">Upgrade to unlock all features</p>
+                      <Button onClick={() => window.location.href = '/checkout'}>
+                        Upgrade Now
+                      </Button>
                     </div>
                   )}
                 </CardContent>
