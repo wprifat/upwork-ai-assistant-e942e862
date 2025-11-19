@@ -41,7 +41,7 @@ const Dashboard = () => {
   }, [user]);
 
   const handleLaunchApp = () => {
-    window.open('https://upa.webworkmedia.net/', '_blank', 'noopener,noreferrer');
+    window.location.href = '/app';
   };
 
   // Format subscription end date
