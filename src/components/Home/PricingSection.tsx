@@ -27,10 +27,10 @@ const PricingSection = () => {
             <div className="mb-6">
               <h3 className="font-heading font-bold text-2xl mb-2">Lifetime Deal</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold text-primary">$99</span>
-                <span className="text-muted-foreground line-through">$299</span>
+                <span className="text-5xl font-bold text-primary">$15</span>
+                <span className="text-muted-foreground line-through">$30</span>
               </div>
-              <p className="text-muted-foreground mt-2">One-time payment, lifetime access</p>
+              <p className="text-muted-foreground mt-2">One-time payment, lifetime access • 50% off</p>
             </div>
 
             <ul className="space-y-4 mb-8">
