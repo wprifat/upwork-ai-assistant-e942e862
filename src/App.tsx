@@ -12,7 +12,10 @@ import Checkout from "./pages/Checkout";
 import CheckoutComplete from "./pages/CheckoutComplete";
 import NotFound from "./pages/NotFound";
 import AppLauncher from "./pages/AppLauncher";
+import AdminLogin from "./pages/AdminLogin";
+import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +31,15 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkout/complete" element={<CheckoutComplete />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            } 
+          />
           <Route 
             path="/dashboard" 
             element={
