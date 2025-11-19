@@ -1,19 +1,26 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Send, Info } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const EmailNewsletter = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const quillRef = useRef<ReactQuill>(null);
   const { toast } = useToast();
 
   const personalizationTokens = [
@@ -23,7 +30,12 @@ const EmailNewsletter = () => {
   ];
 
   const insertToken = (token: string) => {
-    setMessage((prev) => prev + token);
+    if (quillRef.current) {
+      const editor = quillRef.current.getEditor();
+      const cursorPosition = editor.getSelection()?.index || 0;
+      editor.insertText(cursorPosition, token);
+      editor.setSelection(cursorPosition + token.length, 0);
+    }
   };
 
   const handleSendNewsletter = async (e: React.FormEvent) => {
@@ -88,34 +100,6 @@ const EmailNewsletter = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSendNewsletter} className="space-y-6">
-          {/* Personalization Tokens Info */}
-          <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <Info className="h-4 w-4 text-primary" />
-              Available Personalization Tokens
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {personalizationTokens.map((item) => (
-                <button
-                  key={item.token}
-                  type="button"
-                  onClick={() => insertToken(item.token)}
-                  className="group"
-                >
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                  >
-                    {item.token}
-                  </Badge>
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Click tokens to insert them. They'll be automatically replaced with user data.
-            </p>
-          </div>
-
           {/* Subject */}
           <div className="space-y-2">
             <Label htmlFor="subject">Subject Line</Label>
@@ -131,8 +115,23 @@ const EmailNewsletter = () => {
 
           {/* Message Body */}
           <div className="space-y-2">
-            <Label>Message Body</Label>
+            <div className="flex items-center justify-between">
+              <Label>Message Body</Label>
+              <Select onValueChange={insertToken}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Insert token..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {personalizationTokens.map((item) => (
+                    <SelectItem key={item.token} value={item.token}>
+                      {item.token} - {item.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <ReactQuill
+              ref={quillRef}
               theme="snow"
               value={message}
               onChange={setMessage}
@@ -146,7 +145,7 @@ const EmailNewsletter = () => {
                 ],
               }}
               className="bg-background"
-              placeholder="Write your newsletter content... Use personalization tokens like {F_name} for dynamic content."
+              placeholder="Write your newsletter content... Use the dropdown above to insert personalization tokens."
             />
           </div>
 
