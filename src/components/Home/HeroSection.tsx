@@ -3,7 +3,7 @@ import { Sparkles, TrendingUp, CheckCircle } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
+    <section className="relative py-16 md:py-20 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5"></div>
       
