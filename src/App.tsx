@@ -11,6 +11,7 @@ import ProfileCreate from "./pages/ProfileCreate";
 import Checkout from "./pages/Checkout";
 import CheckoutComplete from "./pages/CheckoutComplete";
 import NotFound from "./pages/NotFound";
+import AppLauncher from "./pages/AppLauncher";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/app" 
+            element={
+              <ProtectedRoute>
+                <AppLauncher />
               </ProtectedRoute>
             } 
           />
