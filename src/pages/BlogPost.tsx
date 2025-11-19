@@ -320,43 +320,41 @@ const BlogPost = () => {
 
                   {/* Post Navigation */}
                   {(previousPost || nextPost) && (
-                    <nav className="mt-16 pt-12 border-t border-border">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <nav className="mt-12 pt-8 border-t border-border">
+                      <div className="flex items-center justify-between gap-6">
                         {/* Previous Post */}
-                        <div className={previousPost ? "" : "md:col-start-2"}>
-                          {previousPost && (
-                            <Link 
-                              to={`/blog/${previousPost.slug}`}
-                              className="group block p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-card transition-all"
-                            >
-                              <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
-                                <ChevronLeft className="h-4 w-4" />
-                                <span className="font-medium">Previous Article</span>
-                              </div>
-                              <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {previousPost ? (
+                          <Link 
+                            to={`/blog/${previousPost.slug}`}
+                            className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <ChevronLeft className="h-5 w-5" />
+                            <div>
+                              <p className="text-xs uppercase tracking-wide mb-0.5">Previous</p>
+                              <p className="text-sm font-medium text-foreground group-hover:text-primary line-clamp-1">
                                 {previousPost.title}
-                              </h4>
-                            </Link>
-                          )}
-                        </div>
+                              </p>
+                            </div>
+                          </Link>
+                        ) : (
+                          <div />
+                        )}
 
                         {/* Next Post */}
-                        <div>
-                          {nextPost && (
-                            <Link 
-                              to={`/blog/${nextPost.slug}`}
-                              className="group block p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-card transition-all text-right"
-                            >
-                              <div className="flex items-center justify-end gap-3 text-sm text-muted-foreground mb-2">
-                                <span className="font-medium">Next Article</span>
-                                <ChevronRight className="h-4 w-4" />
-                              </div>
-                              <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {nextPost && (
+                          <Link 
+                            to={`/blog/${nextPost.slug}`}
+                            className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-right"
+                          >
+                            <div>
+                              <p className="text-xs uppercase tracking-wide mb-0.5">Next</p>
+                              <p className="text-sm font-medium text-foreground group-hover:text-primary line-clamp-1">
                                 {nextPost.title}
-                              </h4>
-                            </Link>
-                          )}
-                        </div>
+                              </p>
+                            </div>
+                            <ChevronRight className="h-5 w-5" />
+                          </Link>
+                        )}
                       </div>
                     </nav>
                   )}
