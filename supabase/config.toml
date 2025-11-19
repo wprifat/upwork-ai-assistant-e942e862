@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.send-profile-welcome]
 verify_jwt = false
+
+[functions.send-signup-welcome]
+verify_jwt = false
+
+[functions.send-purchase-confirmation]
+verify_jwt = false

@@ -100,6 +100,16 @@ const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planTyp
 
       if (profileError) throw profileError;
 
+      // Send purchase confirmation email
+      supabase.functions.invoke('send-purchase-confirmation', {
+        body: {
+          email: formData.email,
+          name: formData.fullName,
+          plan: planType,
+          amount: plan.price,
+        }
+      }).catch(err => console.error('Email error:', err));
+
       // Process payment
       const { error: paymentError } = await stripe.confirmPayment({
         elements,
