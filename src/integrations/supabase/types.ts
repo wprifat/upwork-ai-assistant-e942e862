@@ -158,6 +158,36 @@ export type Database = {
         }
         Relationships: []
       }
+      website_settings: {
+        Row: {
+          favicon_url: string | null
+          header_tracking_code: string | null
+          id: string
+          meta_description: string | null
+          site_title: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          favicon_url?: string | null
+          header_tracking_code?: string | null
+          id?: string
+          meta_description?: string | null
+          site_title?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          favicon_url?: string | null
+          header_tracking_code?: string | null
+          id?: string
+          meta_description?: string | null
+          site_title?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

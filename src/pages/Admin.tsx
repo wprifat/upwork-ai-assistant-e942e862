@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Users, Mail, Activity, BookOpen } from "lucide-react";
+import { LogOut, Users, Mail, Activity, BookOpen, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UserDataTable from "@/components/Admin/UserDataTable";
 import EmailNewsletter from "@/components/Admin/EmailNewsletter";
 import UsageTracking from "@/components/Admin/UsageTracking";
 import BlogManagement from "@/components/Admin/BlogManagement";
+import WebsiteSettings from "@/components/Admin/WebsiteSettings";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -42,14 +43,18 @@ const Admin = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full max-w-3xl grid-cols-4">
+          <TabsList className="grid w-full max-w-4xl grid-cols-5">
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
-              User Data
+              Users
             </TabsTrigger>
             <TabsTrigger value="blog" className="gap-2">
               <BookOpen className="h-4 w-4" />
               Blog
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2">
+              <Globe className="h-4 w-4" />
+              Settings
             </TabsTrigger>
             <TabsTrigger value="newsletter" className="gap-2">
               <Mail className="h-4 w-4" />
@@ -67,6 +72,10 @@ const Admin = () => {
 
           <TabsContent value="blog" className="space-y-4">
             <BlogManagement />
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-4">
+            <WebsiteSettings />
           </TabsContent>
 
           <TabsContent value="newsletter" className="space-y-4">
