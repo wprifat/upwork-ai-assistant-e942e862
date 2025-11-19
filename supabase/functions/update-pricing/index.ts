@@ -34,18 +34,25 @@ serve(async (req) => {
 
     if (!roleData) throw new Error("Unauthorized: Admin access required");
 
-    const { product_name, current_price, discount_percentage } = await req.json();
+    const { product_name, base_price, current_price, discount_percentage } = await req.json();
 
     if (!product_name || current_price === undefined) {
       throw new Error("Missing required fields");
     }
 
+    const updateData: any = {
+      current_price,
+      discount_percentage: discount_percentage || 0,
+    };
+
+    // Only update base_price if it's provided
+    if (base_price !== undefined) {
+      updateData.base_price = base_price;
+    }
+
     const { data, error } = await supabaseClient
       .from("pricing_settings")
-      .update({
-        current_price,
-        discount_percentage: discount_percentage || 0,
-      })
+      .update(updateData)
       .eq("product_name", product_name)
       .select()
       .single();
