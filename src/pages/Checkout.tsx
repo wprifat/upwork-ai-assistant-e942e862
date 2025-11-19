@@ -101,18 +101,17 @@ const Checkout = () => {
             </div>
 
             <div className="space-y-4">
-            <Button
-              onClick={handleCheckout}
-              className="w-full"
-              size="lg"
-            >
-              Complete Purchase
-            </Button>
+              <Button
+                onClick={handleCheckout}
+                className="w-full"
+                size="lg"
+              >
+                Complete Purchase
               </Button>
             
-            <p className="text-sm text-muted-foreground text-center">
-              Next step: Create your account and complete payment
-            </p>
+              <p className="text-sm text-muted-foreground text-center">
+                Next step: Create your account and complete payment
+              </p>
             </div>
           </Card>
         </div>
