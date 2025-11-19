@@ -9,6 +9,12 @@ verify_jwt = false
 [functions.create-payment-intent]
 verify_jwt = false
 
+[functions.update-pricing]
+verify_jwt = false
+
+[functions.create-coupon]
+verify_jwt = false
+
 [functions.send-profile-welcome]
 verify_jwt = false
 
