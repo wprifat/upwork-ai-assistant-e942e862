@@ -48,7 +48,7 @@ const TestimonialsSection = () => {
   );
 
   return (
-    <section className="py-20 bg-muted/30 overflow-hidden">
+    <section className="py-12 md:py-16 bg-muted/30 overflow-hidden">
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="mb-4">What Freelancers Say</h2>

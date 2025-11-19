@@ -29,9 +29,9 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section id="features" className="py-20 md:py-32">
+    <section id="features" className="py-12 md:py-16">
       <div className="container-custom">
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center mb-12 animate-fade-in-up">
           <h2 className="font-heading font-bold mb-4">
             Powerful Features
           </h2>
@@ -63,7 +63,7 @@ const FeaturesSection = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center p-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl border border-primary/20 animate-fade-in">
+        <div className="mt-12 text-center p-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl border border-primary/20 animate-fade-in">
           <h3 className="font-heading font-bold text-2xl mb-3">
             Ready to Win More Projects?
           </h3>

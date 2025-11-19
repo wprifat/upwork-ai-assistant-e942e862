@@ -34,9 +34,9 @@ const FAQSection = () => {
   ];
 
   return (
-    <section id="faq" className="py-20 md:py-32">
+    <section id="faq" className="py-12 md:py-16">
       <div className="container-custom">
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center mb-12 animate-fade-in-up">
           <h2 className="font-heading font-bold mb-4">
             FAQ
           </h2>
@@ -64,7 +64,7 @@ const FAQSection = () => {
           </Accordion>
         </div>
 
-        <div className="mt-16 text-center animate-fade-in">
+        <div className="mt-12 text-center animate-fade-in">
           <p className="text-muted-foreground mb-4">Still have questions?</p>
           <a href="/contact" className="text-primary hover:underline font-semibold">
             Contact our support team →

@@ -24,9 +24,9 @@ const HowItWorksSection = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-32 bg-muted/30">
+    <section id="how-it-works" className="py-12 md:py-16 bg-muted/30">
       <div className="container-custom">
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center mb-12 animate-fade-in-up">
           <h2 className="font-heading font-bold mb-4">
             How It Works
           </h2>
