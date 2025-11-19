@@ -36,18 +36,18 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link to="/#how-it-works" className="text-foreground hover:text-primary transition-colors font-medium">
               How It Works
-            </a>
-            <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
+            </Link>
+            <Link to="/#features" className="text-foreground hover:text-primary transition-colors font-medium">
               Features
-            </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
+            </Link>
+            <Link to="/#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
               Pricing
-            </a>
-            <a href="#faq" className="text-foreground hover:text-primary transition-colors font-medium">
+            </Link>
+            <Link to="/#faq" className="text-foreground hover:text-primary transition-colors font-medium">
               FAQ
-            </a>
+            </Link>
             <Link to="/contact" className="text-foreground hover:text-primary transition-colors font-medium">
               Contact
             </Link>
@@ -70,9 +70,9 @@ const Header = () => {
                 <Link to="/auth">
                   <Button variant="ghost">Sign In</Button>
                 </Link>
-                <a href="#pricing">
+                <Link to="/#pricing">
                   <Button variant="default">Get Started</Button>
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -90,34 +90,34 @@ const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden py-6 border-t border-border">
             <nav className="flex flex-col gap-4">
-              <a 
-                href="#how-it-works" 
+              <Link 
+                to="/#how-it-works" 
                 className="text-foreground hover:text-primary transition-colors font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 How It Works
-              </a>
-              <a 
-                href="#features" 
+              </Link>
+              <Link 
+                to="/#features" 
                 className="text-foreground hover:text-primary transition-colors font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Features
-              </a>
-              <a 
-                href="#pricing" 
+              </Link>
+              <Link 
+                to="/#pricing" 
                 className="text-foreground hover:text-primary transition-colors font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Pricing
-              </a>
-              <a 
-                href="#faq" 
+              </Link>
+              <Link 
+                to="/#faq" 
                 className="text-foreground hover:text-primary transition-colors font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 FAQ
-              </a>
+              </Link>
               <Link 
                 to="/contact" 
                 className="text-foreground hover:text-primary transition-colors font-medium py-2"
@@ -148,9 +148,9 @@ const Header = () => {
                     <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
                       <Button variant="ghost" className="w-full">Sign In</Button>
                     </Link>
-                    <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/#pricing" onClick={() => setMobileMenuOpen(false)}>
                       <Button variant="default" className="w-full">Get Started</Button>
-                    </a>
+                    </Link>
                   </>
                 )}
               </div>
