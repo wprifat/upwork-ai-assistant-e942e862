@@ -179,7 +179,7 @@ const PricingSection = () => {
 
             <Button 
               variant="outline" 
-              className="w-full" 
+              className="w-full hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors" 
               size="xl"
               onClick={() => navigate("/checkout?plan=monthly")}
             >
