@@ -8,10 +8,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+interface UserData {
+  email: string;
+  full_name: string | null;
+  plan_type: string;
+}
+
 interface NewsletterRequest {
   subject: string;
   message: string;
-  recipients: string[];
+  users: UserData[];
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,32 +26,153 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { subject, message, recipients }: NewsletterRequest = await req.json();
+    const { subject, message, users }: NewsletterRequest = await req.json();
 
-    console.log(`Sending newsletter to ${recipients.length} recipients`);
+    console.log(`Sending newsletter to ${users.length} recipients`);
 
-    const emailPromises = recipients.map((email) =>
-      resend.emails.send({
-        from: "UpAssistify <onboarding@resend.dev>",
-        to: [email],
-        subject: subject,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">
-              UpAssistify Newsletter
-            </h1>
-            <div style="margin: 20px 0; line-height: 1.6; color: #666;">
-              ${message.split('\n').map(line => `<p>${line}</p>`).join('')}
+    const emailPromises = users.map((user) => {
+      // Extract first name from full_name or email
+      const firstName = user.full_name 
+        ? user.full_name.split(' ')[0] 
+        : user.email.split('@')[0];
+
+      // Replace personalization tokens
+      let personalizedMessage = message
+        .replace(/{F_name}/g, firstName)
+        .replace(/{Email}/g, user.email)
+        .replace(/{Plan}/g, user.plan_type.charAt(0).toUpperCase() + user.plan_type.slice(1));
+
+      // Create professional email template
+      const emailHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background-color: #f5f5f5;
+              }
+              .email-wrapper {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+              }
+              .email-header {
+                background: linear-gradient(135deg, #6FBF73 0%, #5A9F5D 100%);
+                padding: 40px 30px;
+                text-align: center;
+              }
+              .logo {
+                width: 48px;
+                height: 48px;
+                background-color: rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+              }
+              .logo-text {
+                color: #ffffff;
+                font-size: 28px;
+                font-weight: bold;
+              }
+              .brand-name {
+                color: #ffffff;
+                font-size: 24px;
+                font-weight: 700;
+                margin: 0;
+              }
+              .email-body {
+                padding: 40px 30px;
+                color: #333333;
+                line-height: 1.6;
+              }
+              .email-body h1,
+              .email-body h2,
+              .email-body h3 {
+                color: #1a1a1a;
+                margin-top: 24px;
+                margin-bottom: 12px;
+              }
+              .email-body p {
+                margin: 16px 0;
+                color: #555555;
+              }
+              .email-body a {
+                color: #6FBF73;
+                text-decoration: none;
+                font-weight: 500;
+              }
+              .email-body ul,
+              .email-body ol {
+                margin: 16px 0;
+                padding-left: 24px;
+              }
+              .email-body li {
+                margin: 8px 0;
+                color: #555555;
+              }
+              .email-footer {
+                background-color: #f8f9fa;
+                padding: 30px;
+                text-align: center;
+                border-top: 1px solid #e9ecef;
+              }
+              .email-footer p {
+                margin: 8px 0;
+                color: #6c757d;
+                font-size: 14px;
+              }
+              .unsubscribe-link {
+                color: #6c757d;
+                text-decoration: underline;
+                font-size: 12px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="email-wrapper">
+              <!-- Header with Logo -->
+              <div class="email-header">
+                <div class="logo">
+                  <span class="logo-text">U</span>
+                </div>
+                <h1 class="brand-name">UpAssistify</h1>
+              </div>
+              
+              <!-- Email Body -->
+              <div class="email-body">
+                ${personalizedMessage}
+              </div>
+              
+              <!-- Footer -->
+              <div class="email-footer">
+                <p><strong>UpAssistify</strong></p>
+                <p>AI-Powered Upwork Assistant for Freelancers</p>
+                <p style="margin-top: 20px;">
+                  You received this email because you are a registered user of UpAssistify.
+                </p>
+                <p>
+                  © ${new Date().getFullYear()} UpAssistify. All rights reserved.
+                </p>
+              </div>
             </div>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
-            <p style="color: #999; font-size: 12px; text-align: center;">
-              You received this email because you are a registered user of UpAssistify.<br/>
-              © ${new Date().getFullYear()} UpAssistify. All rights reserved.
-            </p>
-          </div>
-        `,
-      })
-    );
+          </body>
+        </html>
+      `;
+
+      return resend.emails.send({
+        from: "UpAssistify <onboarding@resend.dev>",
+        to: [user.email],
+        subject: subject,
+        html: emailHtml,
+      });
+    });
 
     const results = await Promise.allSettled(emailPromises);
     
