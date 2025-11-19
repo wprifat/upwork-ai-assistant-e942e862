@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Calendar, Clock } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
@@ -15,11 +15,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
 
 const EmailNewsletter = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState<Date>();
+  const [scheduledTime, setScheduledTime] = useState("12:00");
   const quillRef = useRef<ReactQuill>(null);
   const { toast } = useToast();
 
@@ -43,46 +51,86 @@ const EmailNewsletter = () => {
     setLoading(true);
 
     try {
-      const { data: users, error: usersError } = await supabase
-        .from("profiles")
-        .select("email, full_name, plan_type");
+      if (scheduleEnabled) {
+        // Schedule newsletter
+        if (!scheduledDate) {
+          toast({
+            title: "Date required",
+            description: "Please select a date for the scheduled newsletter.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
 
-      if (usersError) throw usersError;
+        const [hours, minutes] = scheduledTime.split(':');
+        const scheduledDateTime = new Date(scheduledDate);
+        scheduledDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-      if (!users || users.length === 0) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("Not authenticated");
+
+        const { error: scheduleError } = await supabase
+          .from("scheduled_newsletters")
+          .insert({
+            subject,
+            message,
+            scheduled_for: scheduledDateTime.toISOString(),
+            created_by: user.id,
+          });
+
+        if (scheduleError) throw scheduleError;
+
         toast({
-          title: "No users found",
-          description: "There are no users to send the newsletter to.",
-          variant: "destructive",
+          title: "Newsletter scheduled!",
+          description: `Will be sent on ${format(scheduledDateTime, "PPP 'at' p")}`,
         });
-        return;
+      } else {
+        // Send immediately
+        const { data: users, error: usersError } = await supabase
+          .from("profiles")
+          .select("email, full_name, plan_type");
+
+        if (usersError) throw usersError;
+
+        if (!users || users.length === 0) {
+          toast({
+            title: "No users found",
+            description: "There are no users to send the newsletter to.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { error } = await supabase.functions.invoke("send-newsletter", {
+          body: {
+            subject,
+            message,
+            users: users.map((u) => ({
+              email: u.email,
+              full_name: u.full_name,
+              plan_type: u.plan_type,
+            })),
+          },
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Newsletter sent!",
+          description: `Successfully sent to ${users.length} users.`,
+        });
       }
-
-      const { error } = await supabase.functions.invoke("send-newsletter", {
-        body: {
-          subject,
-          message,
-          users: users.map((u) => ({
-            email: u.email,
-            full_name: u.full_name,
-            plan_type: u.plan_type,
-          })),
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Newsletter sent!",
-        description: `Successfully sent to ${users.length} users.`,
-      });
 
       setSubject("");
       setMessage("");
+      setScheduleEnabled(false);
+      setScheduledDate(undefined);
+      setScheduledTime("12:00");
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send newsletter",
+        description: error.message || "Failed to process newsletter",
         variant: "destructive",
       });
     } finally {
@@ -149,6 +197,68 @@ const EmailNewsletter = () => {
             />
           </div>
 
+          {/* Scheduling Options */}
+          <div className="space-y-4 p-4 border border-border rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="schedule-toggle">Schedule Newsletter</Label>
+                <p className="text-sm text-muted-foreground">
+                  Send newsletter at a specific date and time
+                </p>
+              </div>
+              <Switch
+                id="schedule-toggle"
+                checked={scheduleEnabled}
+                onCheckedChange={setScheduleEnabled}
+              />
+            </div>
+
+            {scheduleEnabled && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !scheduledDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={scheduledDate}
+                        onSelect={setScheduledDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="time">Time</Label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="time"
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Preview Info */}
           <div className="p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
@@ -162,7 +272,12 @@ const EmailNewsletter = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending to all users...
+                {scheduleEnabled ? "Scheduling..." : "Sending to all users..."}
+              </>
+            ) : scheduleEnabled ? (
+              <>
+                <Calendar className="mr-2 h-4 w-4" />
+                Schedule Newsletter
               </>
             ) : (
               <>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Loader2, Save, Upload } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Upload, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -20,6 +24,9 @@ const BlogPostEditor = ({ postId, onBack }: BlogPostEditorProps) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [schedulePublish, setSchedulePublish] = useState(false);
+  const [publishDate, setPublishDate] = useState<Date>();
+  const [publishTime, setPublishTime] = useState("12:00");
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -133,14 +140,34 @@ const BlogPostEditor = ({ postId, onBack }: BlogPostEditorProps) => {
       return;
     }
 
+    if (schedulePublish && !publishDate) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a publish date",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
       
+      let publishedAt = null;
+      if (schedulePublish && publishDate) {
+        const [hours, minutes] = publishTime.split(':');
+        const scheduledDateTime = new Date(publishDate);
+        scheduledDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        publishedAt = scheduledDateTime.toISOString();
+      } else if (formData.published) {
+        publishedAt = new Date().toISOString();
+      }
+
       const postData = {
         ...formData,
         author_id: userData.user?.id,
-        published_at: formData.published ? new Date().toISOString() : null,
+        published_at: publishedAt,
+        published: schedulePublish ? false : formData.published,
       };
 
       if (postId) {
@@ -158,7 +185,9 @@ const BlogPostEditor = ({ postId, onBack }: BlogPostEditorProps) => {
 
       toast({
         title: "Success",
-        description: `Post ${postId ? "updated" : "created"} successfully`,
+        description: schedulePublish 
+          ? `Post scheduled for ${format(publishDate!, "PPP 'at' p")}`
+          : `Post ${postId ? "updated" : "created"} successfully`,
       });
 
       onBack();
@@ -308,6 +337,91 @@ const BlogPostEditor = ({ postId, onBack }: BlogPostEditorProps) => {
                 <Upload className="h-4 w-4 animate-pulse" />
                 Uploading...
               </p>
+            )}
+          </div>
+
+          {/* Publishing Options */}
+          <div className="space-y-4 pt-6 border-t">
+            <h3 className="text-lg font-semibold">Publishing Options</h3>
+            
+            <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+              <div className="space-y-0.5">
+                <Label htmlFor="published">Publish Immediately</Label>
+                <p className="text-sm text-muted-foreground">
+                  Make this post visible to everyone
+                </p>
+              </div>
+              <Switch
+                id="published"
+                checked={formData.published}
+                onCheckedChange={(checked) => {
+                  setFormData((prev) => ({ ...prev, published: checked }));
+                  if (checked) setSchedulePublish(false);
+                }}
+                disabled={schedulePublish}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+              <div className="space-y-0.5">
+                <Label htmlFor="schedule">Schedule Publishing</Label>
+                <p className="text-sm text-muted-foreground">
+                  Publish at a specific date and time
+                </p>
+              </div>
+              <Switch
+                id="schedule"
+                checked={schedulePublish}
+                onCheckedChange={(checked) => {
+                  setSchedulePublish(checked);
+                  if (checked) setFormData((prev) => ({ ...prev, published: false }));
+                }}
+              />
+            </div>
+
+            {schedulePublish && (
+              <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div className="space-y-2">
+                  <Label>Publish Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !publishDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {publishDate ? format(publishDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={publishDate}
+                        onSelect={setPublishDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="publish-time">Time</Label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="publish-time"
+                      type="time"
+                      value={publishTime}
+                      onChange={(e) => setPublishTime(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 
