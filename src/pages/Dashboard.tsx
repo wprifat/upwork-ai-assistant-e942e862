@@ -1,12 +1,9 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Target, FileText, UserCircle, TrendingUp, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Rocket, CreditCard, UserCircle, HelpCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
   const handleAnalyze = () => {
