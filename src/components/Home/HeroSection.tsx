@@ -24,7 +24,7 @@ const HeroSection = () => {
               Boost your chances of winning more Upwork jobs with intelligent profile, job, and cover letter analysis.
             </p>
 
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-4 md:gap-6">
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
                 <span className="text-foreground">Instant job match scoring</span>
