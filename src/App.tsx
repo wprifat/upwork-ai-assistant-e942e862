@@ -14,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import AppLauncher from "./pages/AppLauncher";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkout/complete" element={<CheckoutComplete />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route 
             path="/admin" 
