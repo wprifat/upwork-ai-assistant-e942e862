@@ -6,20 +6,20 @@ const HowItWorksSection = () => {
     {
       number: "01",
       icon: UserCircle,
-      title: "Analyze Your Profile & Niche",
-      description: "Upload your Upwork profile and let our AI extract your skills, experience level, and niche expertise automatically."
+      title: "Analyze Your Profile",
+      description: "Upload your profile and let AI extract your skills automatically."
     },
     {
       number: "02",
       icon: Target,
-      title: "Check Job Match Scores Instantly",
-      description: "Paste any Upwork job posting and get an instant compatibility score based on your profile, skills, and experience."
+      title: "Check Job Match",
+      description: "Get instant compatibility scores for any job posting."
     },
     {
       number: "03",
       icon: FileText,
-      title: "Optimize Your Cover Letter with AI Guidance",
-      description: "Generate AI-powered suggestions to enhance your cover letter and increase your chances of getting hired."
+      title: "Optimize Cover Letter",
+      description: "Generate AI-powered suggestions to boost your proposals."
     }
   ];
 
@@ -31,7 +31,7 @@ const HowItWorksSection = () => {
             How It Works
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Three simple steps to transform your Upwork success
+            Three simple steps to success
           </p>
         </div>
 
@@ -73,7 +73,7 @@ const HowItWorksSection = () => {
         <div className="text-center animate-fade-in">
           <a href="#pricing">
             <Button variant="hero" size="xl">
-              Start Winning More Jobs Today
+              Get Started Today
             </Button>
           </a>
         </div>

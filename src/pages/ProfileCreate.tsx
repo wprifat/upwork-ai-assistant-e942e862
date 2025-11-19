@@ -25,9 +25,9 @@ const ProfileCreate = () => {
                   <UserCircle className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="font-heading font-bold text-4xl">Update Your Profile</h1>
+                  <h1 className="font-heading font-bold text-4xl">Update Profile</h1>
                   <p className="text-lg text-muted-foreground">
-                    Keep your information current for better job matches
+                    Keep your info current
                   </p>
                 </div>
               </div>
@@ -43,7 +43,7 @@ const ProfileCreate = () => {
                     className="mt-2"
                   />
                   <p className="text-sm text-muted-foreground mt-1">
-                    We'll extract your skills and experience automatically
+                    We'll extract your skills automatically
                   </p>
                 </div>
 
@@ -82,7 +82,7 @@ const ProfileCreate = () => {
                     className="mt-2 min-h-[100px]"
                   />
                   <p className="text-sm text-muted-foreground mt-1">
-                    These will be used to calculate job match scores
+                    Used for job match scoring
                   </p>
                 </div>
 
@@ -130,12 +130,11 @@ const ProfileCreate = () => {
               </form>
 
               <div className="mt-8 p-6 bg-primary/5 rounded-lg border border-primary/20">
-                <h3 className="font-heading font-semibold text-lg mb-2">Why update your profile?</h3>
+                <h3 className="font-heading font-semibold text-lg mb-2">Why update?</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• More accurate job match scores based on your real skills</li>
-                  <li>• Better AI-powered proposal suggestions</li>
-                  <li>• Personalized insights into your freelancing performance</li>
-                  <li>• Track your growth and success over time</li>
+                  <li>• Better job match scores</li>
+                  <li>• Improved AI suggestions</li>
+                  <li>• Track your progress</li>
                 </ul>
               </div>
             </div>

@@ -9,14 +9,11 @@ const Footer = () => {
       <div className="bg-primary py-16">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-foreground mb-4">
-            Ready to Win More Upwork Jobs?
+            Ready to Win More Jobs?
           </h2>
-          <p className="text-lg text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of freelancers using AI to boost their success rate
-          </p>
           <a href="#pricing">
             <Button variant="hero-secondary" size="xl">
-              Get Lifetime Access Now
+              Get Started Now
             </Button>
           </a>
         </div>
@@ -34,7 +31,7 @@ const Footer = () => {
               <span className="font-heading font-bold text-xl">UpAssistify</span>
             </Link>
             <p className="text-sm text-white/70 mb-4">
-              AI-powered tools to help freelancers win more Upwork projects with better proposals.
+              AI-powered tools for Upwork success.
             </p>
             <div className="flex gap-3">
               <a href="#" className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">

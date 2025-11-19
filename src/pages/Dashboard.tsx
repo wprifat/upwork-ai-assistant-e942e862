@@ -19,9 +19,9 @@ const Dashboard = () => {
       <main className="flex-1 py-20 bg-muted/30">
         <div className="container-custom">
           <div className="mb-12 animate-fade-in-up">
-            <h1 className="font-heading font-bold mb-2">Welcome Back!</h1>
+            <h1 className="font-heading font-bold mb-2">Dashboard</h1>
             <p className="text-xl text-muted-foreground">
-              Start analyzing jobs and optimizing your proposals
+              Analyze jobs and optimize proposals
             </p>
           </div>
 
@@ -94,7 +94,7 @@ const Dashboard = () => {
 
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    <strong>Tip:</strong> For best results, paste the complete job description including requirements and skills needed.
+                    <strong>Tip:</strong> Paste the complete job description for best results.
                   </p>
                 </div>
               </Card>

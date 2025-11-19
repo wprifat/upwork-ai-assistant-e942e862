@@ -8,36 +8,28 @@ import {
 const FAQSection = () => {
   const faqs = [
     {
-      question: "How does the AI job match analyzer work?",
-      answer: "Our AI analyzes both your Upwork profile and the job posting to calculate compatibility across multiple dimensions including skills match, experience level, portfolio relevance, and success probability. It uses advanced natural language processing to understand context and provide accurate match scores."
+      question: "How does the job match analyzer work?",
+      answer: "Our AI analyzes your profile and job postings to calculate compatibility scores across skills, experience, and portfolio relevance."
     },
     {
       question: "Can I use this with my existing Upwork account?",
-      answer: "Yes! UpAssistify works seamlessly with any Upwork account. Simply paste your profile URL or job posting link, and our AI will do the rest. You don't need to share your login credentials or connect your account."
+      answer: "Yes! Simply paste your profile URL or job posting link. No login credentials needed."
     },
     {
       question: "What's included in the lifetime deal?",
-      answer: "The lifetime deal includes unlimited job analyses, AI cover letter optimization, profile insights, priority support, and all future updates - forever. It's a one-time payment with no recurring fees."
-    },
-    {
-      question: "How accurate are the job match scores?",
-      answer: "Our AI has been trained on thousands of successful Upwork proposals and maintains an accuracy rate of over 85%. The scores consider multiple factors including skills alignment, experience level, portfolio relevance, and historical success patterns."
+      answer: "Unlimited analyses, AI optimization, priority support, and all future updates - one-time payment, no recurring fees."
     },
     {
       question: "Do you offer refunds?",
-      answer: "Yes, we offer a 30-day money-back guarantee. If you're not satisfied with UpAssistify for any reason, contact our support team within 30 days of purchase for a full refund."
+      answer: "Yes, we offer a 30-day money-back guarantee."
     },
     {
       question: "Can I upgrade from monthly to lifetime?",
-      answer: "Absolutely! You can upgrade from the monthly plan to the lifetime deal at any time. We'll credit your previous month's payment toward the lifetime price."
-    },
-    {
-      question: "How does the cover letter optimizer work?",
-      answer: "Our AI analyzes both the job requirements and your profile to suggest personalized improvements for your cover letter. It identifies key points to emphasize, suggests better phrasing, and helps you stand out from other applicants."
+      answer: "Absolutely! Your previous month's payment will be credited toward the lifetime price."
     },
     {
       question: "Is my data secure?",
-      answer: "Yes, we take security seriously. All data is encrypted in transit and at rest. We never share your information with third parties, and you can delete your data at any time from your dashboard."
+      answer: "Yes, all data is encrypted and never shared with third parties. You can delete your data anytime."
     }
   ];
 
@@ -46,10 +38,10 @@ const FAQSection = () => {
       <div className="container-custom">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="font-heading font-bold mb-4">
-            Frequently Asked Questions
+            FAQ
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about UpAssistify
+            Quick answers to common questions
           </p>
         </div>
 

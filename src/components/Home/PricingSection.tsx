@@ -7,10 +7,10 @@ const PricingSection = () => {
       <div className="container-custom">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="font-heading font-bold mb-4">
-            Simple, Transparent Pricing
+            Pricing
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose the plan that works best for your freelancing goals
+            Choose your plan
           </p>
         </div>
 
@@ -36,32 +36,28 @@ const PricingSection = () => {
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Unlimited job match analyses</span>
+                <span>Unlimited job analyses</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>AI-powered cover letter optimization</span>
+                <span>AI cover letter optimization</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Profile skill extraction & insights</span>
+                <span>Profile insights</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Priority email support</span>
+                <span>Priority support</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>All future updates included</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>No monthly fees ever</span>
+                <span>All future updates</span>
               </li>
             </ul>
 
             <Button variant="hero" className="w-full" size="xl">
-              Get Lifetime Access
+              Get Started
             </Button>
           </div>
 
@@ -79,28 +75,24 @@ const PricingSection = () => {
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>50 job match analyses per month</span>
+                <span>50 analyses/month</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>AI-powered cover letter optimization</span>
+                <span>AI cover letter optimization</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Profile skill extraction & insights</span>
+                <span>Profile insights</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Standard email support</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Cancel anytime</span>
+                <span>Email support</span>
               </li>
             </ul>
 
             <Button variant="outline" className="w-full" size="xl">
-              Start Monthly Plan
+              Start Monthly
             </Button>
           </div>
         </div>
