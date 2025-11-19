@@ -31,6 +31,7 @@ export const PricingManagement = () => {
   const [pricing, setPricing] = useState<PricingSetting[]>([]);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(false);
+  const [modifiedPricing, setModifiedPricing] = useState<Set<string>>(new Set());
   const [newCoupon, setNewCoupon] = useState({
     code: "",
     discount_type: "percentage",
@@ -81,6 +82,13 @@ export const PricingManagement = () => {
       toast({
         title: "Success",
         description: "Pricing updated successfully",
+      });
+      
+      // Remove from modified set after successful save
+      setModifiedPricing((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(productName);
+        return newSet;
       });
       
       fetchData();
@@ -185,12 +193,7 @@ export const PricingManagement = () => {
                           p.id === item.id ? { ...p, base_price: newBasePrice } : p
                         )
                       );
-                    }}
-                    onBlur={(e) => {
-                      const newBasePrice = parseFloat(e.target.value || "0");
-                      if (newBasePrice !== item.base_price) {
-                        updatePricing(item.product_name, newBasePrice, item.current_price, item.discount_percentage);
-                      }
+                      setModifiedPricing((prev) => new Set(prev).add(item.product_name));
                     }}
                   />
                 </div>
@@ -206,12 +209,7 @@ export const PricingManagement = () => {
                           p.id === item.id ? { ...p, current_price: newPrice } : p
                         )
                       );
-                    }}
-                    onBlur={(e) => {
-                      const newPrice = parseFloat(e.target.value || "0");
-                      if (newPrice !== item.current_price) {
-                        updatePricing(item.product_name, item.base_price, newPrice, item.discount_percentage);
-                      }
+                      setModifiedPricing((prev) => new Set(prev).add(item.product_name));
                     }}
                   />
                 </div>
@@ -227,16 +225,28 @@ export const PricingManagement = () => {
                           p.id === item.id ? { ...p, discount_percentage: newDiscount } : p
                         )
                       );
-                    }}
-                    onBlur={(e) => {
-                      const newDiscount = parseFloat(e.target.value || "0");
-                      if (newDiscount !== item.discount_percentage) {
-                        updatePricing(item.product_name, item.base_price, item.current_price, newDiscount);
-                      }
+                      setModifiedPricing((prev) => new Set(prev).add(item.product_name));
                     }}
                   />
                 </div>
               </div>
+              
+              {modifiedPricing.has(item.product_name) && (
+                <Button
+                  onClick={() => updatePricing(item.product_name, item.base_price, item.current_price, item.discount_percentage)}
+                  disabled={loading}
+                  className="w-full"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              )}
             </div>
           ))}
         </CardContent>
