@@ -248,13 +248,25 @@ const CheckoutComplete = () => {
     // Create payment intent
     const createPaymentIntent = async () => {
       try {
+        console.log("Creating payment intent for:", { amount: plan.price, plan: planType });
+        
         const { data, error } = await supabase.functions.invoke("create-payment-intent", {
           body: { amount: plan.price, plan: planType }
         });
 
-        if (error) throw error;
+        console.log("Payment intent response:", { data, error });
+
+        if (error) {
+          console.error("Supabase function error:", error);
+          throw error;
+        }
+        
         if (data?.clientSecret) {
+          console.log("Setting client secret");
           setClientSecret(data.clientSecret);
+        } else {
+          console.error("No client secret in response:", data);
+          throw new Error("No client secret received");
         }
       } catch (error) {
         console.error("Error creating payment intent:", error);

@@ -12,9 +12,12 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Received payment intent request");
     const { amount, plan } = await req.json();
+    console.log("Payment details:", { amount, plan });
 
     if (!amount || !plan) {
+      console.error("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Amount and plan are required" }),
         {
