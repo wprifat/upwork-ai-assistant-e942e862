@@ -62,9 +62,17 @@ const Auth = () => {
           });
         }
       } else if (data.user) {
+        // Send welcome email
+        supabase.functions.invoke('send-signup-welcome', {
+          body: {
+            email: data.user.email,
+            name: fullName || data.user.email?.split('@')[0],
+          }
+        }).catch(err => console.error('Email error:', err));
+
         toast({
           title: "Account created!",
-          description: "Welcome to UpAssistify. Redirecting to dashboard...",
+          description: "Welcome to UpAssistify. Check your email for next steps!",
         });
         // Auto-confirm is enabled, so redirect immediately
         navigate("/dashboard");
