@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Loader2, ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { Check, ArrowLeft } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 
@@ -41,8 +39,6 @@ const plans = {
 const Checkout = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
   
   const planType = searchParams.get("plan") as keyof typeof plans;
   const plan = plans[planType];
@@ -53,25 +49,8 @@ const Checkout = () => {
     }
   }, [plan, navigate]);
 
-  const handleCheckout = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.functions.invoke(plan.functionName);
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
-        variant: "destructive",
-      });
-      setLoading(false);
-    }
+  const handleCheckout = () => {
+    navigate(`/checkout/complete?plan=${planType}`);
   };
 
   if (!plan) return null;
@@ -122,25 +101,18 @@ const Checkout = () => {
             </div>
 
             <div className="space-y-4">
-              <Button
-                onClick={handleCheckout}
-                disabled={loading}
-                className="w-full"
-                size="lg"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Complete Purchase"
-                )}
+            <Button
+              onClick={handleCheckout}
+              className="w-full"
+              size="lg"
+            >
+              Complete Purchase
+            </Button>
               </Button>
-              
-              <p className="text-sm text-muted-foreground text-center">
-                You will be redirected to Stripe to complete your payment securely
-              </p>
+            
+            <p className="text-sm text-muted-foreground text-center">
+              Next step: Create your account and complete payment
+            </p>
             </div>
           </Card>
         </div>
