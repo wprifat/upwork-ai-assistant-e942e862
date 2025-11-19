@@ -26,9 +26,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending signup welcome email to ${email}`);
 
     const emailResponse = await resend.emails.send({
-      from: "JobMatch AI <onboarding@resend.dev>",
+      from: "UpAssistentify <onboarding@resend.dev>",
       to: [email],
-      subject: "Welcome to JobMatch AI! 🚀",
+      subject: "Welcome to UpAssistentify",
       html: `
         <!DOCTYPE html>
         <html>
@@ -161,14 +161,14 @@ const handler = async (req: Request): Promise<Response> => {
           <body>
             <div class="container">
               <div class="header">
-                <h1>🎯 Welcome to JobMatch AI!</h1>
+                <h1>UpAssistentify</h1>
               </div>
               
               <div class="content">
                 <p class="greeting">Hi ${displayName}! 👋</p>
                 
                 <p class="message">
-                  Thank you for joining JobMatch AI! We're excited to help you discover 
+                  Thank you for joining UpAssistentify! We're excited to help you discover 
                   your perfect job matches using the power of AI. You're now part of a 
                   community of professionals finding opportunities that truly match their skills.
                 </p>
@@ -232,7 +232,7 @@ const handler = async (req: Request): Promise<Response> => {
                   <strong>Need help?</strong> Reply to this email or visit our help center
                 </p>
                 <p>
-                  <a href="${Deno.env.get('SITE_URL') || 'https://yourapp.lovable.app'}">JobMatch AI</a> - 
+                  <a href="${Deno.env.get('SITE_URL') || 'https://yourapp.lovable.app'}">UpAssistentify</a> - 
                   Your AI-Powered Job Matching Platform
                 </p>
               </div>
