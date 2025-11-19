@@ -13,7 +13,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { z } from "zod";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 const plans = {
   lifetime: {
@@ -302,7 +303,12 @@ const CheckoutComplete = () => {
             <p className="text-muted-foreground">Create your account and complete payment in one step</p>
           </div>
 
-          {clientSecret ? (
+          {!stripePublishableKey ? (
+            <Card className="p-8 text-center">
+              <p className="text-destructive mb-4">Stripe is not configured. Please add your Stripe publishable key.</p>
+              <p className="text-sm text-muted-foreground">Contact support for assistance.</p>
+            </Card>
+          ) : clientSecret && stripePromise ? (
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm plan={plan} planType={planType} />
             </Elements>
