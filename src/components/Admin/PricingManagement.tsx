@@ -59,7 +59,7 @@ export const PricingManagement = () => {
     if (couponsData) setCoupons(couponsData);
   };
 
-  const updatePricing = async (productName: string, newPrice: number, discount: number) => {
+  const updatePricing = async (productName: string, basePrice: number, newPrice: number, discount: number) => {
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -67,6 +67,7 @@ export const PricingManagement = () => {
       const { error } = await supabase.functions.invoke("update-pricing", {
         body: {
           product_name: productName,
+          base_price: basePrice,
           current_price: newPrice,
           discount_percentage: discount,
         },
@@ -171,10 +172,19 @@ export const PricingManagement = () => {
           {pricing.map((item) => (
             <div key={item.id} className="border rounded-lg p-4 space-y-3">
               <h3 className="font-semibold capitalize">{item.product_name} Plan</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label>Base Price (${item.currency.toUpperCase()})</Label>
-                  <Input value={item.base_price} disabled />
+                  <Input
+                    type="number"
+                    defaultValue={item.base_price}
+                    onBlur={(e) => {
+                      const newBasePrice = parseFloat(e.target.value);
+                      if (newBasePrice !== item.base_price) {
+                        updatePricing(item.product_name, newBasePrice, item.current_price, item.discount_percentage);
+                      }
+                    }}
+                  />
                 </div>
                 <div>
                   <Label>Current Price</Label>
@@ -184,7 +194,7 @@ export const PricingManagement = () => {
                     onBlur={(e) => {
                       const newPrice = parseFloat(e.target.value);
                       if (newPrice !== item.current_price) {
-                        updatePricing(item.product_name, newPrice, item.discount_percentage);
+                        updatePricing(item.product_name, item.base_price, newPrice, item.discount_percentage);
                       }
                     }}
                   />
@@ -197,7 +207,7 @@ export const PricingManagement = () => {
                     onBlur={(e) => {
                       const newDiscount = parseFloat(e.target.value);
                       if (newDiscount !== item.discount_percentage) {
-                        updatePricing(item.product_name, item.current_price, newDiscount);
+                        updatePricing(item.product_name, item.base_price, item.current_price, newDiscount);
                       }
                     }}
                   />
