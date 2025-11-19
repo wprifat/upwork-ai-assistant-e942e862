@@ -1,7 +1,58 @@
 import { Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const PricingSection = () => {
+  const { toast } = useToast();
+  const [loadingLifetime, setLoadingLifetime] = useState(false);
+  const [loadingMonthly, setLoadingMonthly] = useState(false);
+
+  const handleLifetimeCheckout = async () => {
+    try {
+      setLoadingLifetime(true);
+      const { data, error } = await supabase.functions.invoke('create-lifetime-checkout');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingLifetime(false);
+    }
+  };
+
+  const handleMonthlyCheckout = async () => {
+    try {
+      setLoadingMonthly(true);
+      const { data, error } = await supabase.functions.invoke('create-monthly-checkout');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingMonthly(false);
+    }
+  };
+
   return (
     <section id="pricing" className="py-12 md:py-16 bg-muted/30">
       <div className="container-custom">
@@ -56,8 +107,14 @@ const PricingSection = () => {
               </li>
             </ul>
 
-            <Button variant="hero" className="w-full" size="xl">
-              Get Started
+            <Button 
+              variant="hero" 
+              className="w-full" 
+              size="xl"
+              onClick={handleLifetimeCheckout}
+              disabled={loadingLifetime}
+            >
+              {loadingLifetime ? "Loading..." : "Get Started"}
             </Button>
           </div>
 
@@ -91,8 +148,14 @@ const PricingSection = () => {
               </li>
             </ul>
 
-            <Button variant="outline" className="w-full" size="xl">
-              Start Monthly
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              size="xl"
+              onClick={handleMonthlyCheckout}
+              disabled={loadingMonthly}
+            >
+              {loadingMonthly ? "Loading..." : "Start Monthly"}
             </Button>
           </div>
         </div>
