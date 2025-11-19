@@ -20,9 +20,9 @@ const Contact = () => {
         <div className="container-custom">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16 animate-fade-in-up">
-              <h1 className="font-heading font-bold mb-4">Get in Touch</h1>
+              <h1 className="font-heading font-bold mb-4">Contact Us</h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Have a question or need help? We're here to assist you.
+                Need help? We're here for you.
               </p>
             </div>
 
@@ -68,9 +68,8 @@ const Contact = () => {
                       <Mail className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-lg mb-2">Email Us</h3>
+                      <h3 className="font-heading font-semibold text-lg mb-2">Email</h3>
                       <p className="text-muted-foreground">support@upassistify.com</p>
-                      <p className="text-sm text-muted-foreground mt-1">We reply within 24 hours</p>
                     </div>
                   </div>
                 </div>
@@ -82,8 +81,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-heading font-semibold text-lg mb-2">Live Chat</h3>
-                      <p className="text-muted-foreground">Available for premium users</p>
-                      <p className="text-sm text-muted-foreground mt-1">Instant support when you need it</p>
+                      <p className="text-muted-foreground">For premium users</p>
                     </div>
                   </div>
                 </div>
@@ -102,10 +100,9 @@ const Contact = () => {
                 </div>
 
                 <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-8 border border-primary/20">
-                  <h3 className="font-heading font-semibold text-xl mb-3">Quick Response Guarantee</h3>
+                  <h3 className="font-heading font-semibold text-xl mb-3">Quick Response</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    We pride ourselves on quick response times. All inquiries are answered within 24 hours, 
-                    and lifetime members get priority support.
+                    All inquiries answered within 24 hours. Lifetime members get priority support.
                   </p>
                 </div>
               </div>
