@@ -41,8 +41,7 @@ const Dashboard = () => {
   }, [user]);
 
   const handleLaunchApp = () => {
-    console.log("Launching UpAssistify...");
-    // TODO: Implement actual app launch
+    window.location.href = '/app';
   };
 
   // Format subscription end date
