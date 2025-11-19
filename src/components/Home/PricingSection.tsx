@@ -1,9 +1,54 @@
+import { useState, useEffect } from "react";
 import { Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const PricingSection = () => {
   const navigate = useNavigate();
+  const [pricing, setPricing] = useState<{
+    lifetime: { current_price: number; base_price: number; discount_percentage: number } | null;
+    monthly: { current_price: number; base_price: number; discount_percentage: number } | null;
+  }>({ lifetime: null, monthly: null });
+
+  useEffect(() => {
+    const fetchPricing = async () => {
+      const { data } = await supabase
+        .from("pricing_settings")
+        .select("product_name, current_price, base_price, discount_percentage")
+        .in("product_name", ["lifetime", "monthly"]);
+
+      if (data) {
+        const pricingMap = {
+          lifetime: data.find((p) => p.product_name === "lifetime") || null,
+          monthly: data.find((p) => p.product_name === "monthly") || null,
+        };
+        setPricing(pricingMap);
+      }
+    };
+
+    fetchPricing();
+
+    // Set up real-time subscription for pricing updates
+    const channel = supabase
+      .channel("pricing-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "pricing_settings",
+        },
+        () => {
+          fetchPricing();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     <section id="pricing" className="py-12 md:py-16 bg-muted/30">
@@ -30,10 +75,19 @@ const PricingSection = () => {
             <div className="mb-6">
               <h3 className="font-heading font-bold text-2xl mb-2">Lifetime Deal</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold text-primary">$15</span>
-                <span className="text-muted-foreground line-through">$30</span>
+                <span className="text-5xl font-bold text-primary">
+                  ${pricing.lifetime?.current_price || 997}
+                </span>
+                {pricing.lifetime?.discount_percentage ? (
+                  <span className="text-muted-foreground line-through">
+                    ${pricing.lifetime?.base_price}
+                  </span>
+                ) : null}
               </div>
-              <p className="text-muted-foreground mt-2">One-time payment, lifetime access • 50% off</p>
+              <p className="text-muted-foreground mt-2">
+                One-time payment, lifetime access
+                {pricing.lifetime?.discount_percentage ? ` • ${pricing.lifetime.discount_percentage}% off` : ""}
+              </p>
             </div>
 
             <ul className="space-y-4 mb-8">
@@ -74,10 +128,15 @@ const PricingSection = () => {
             <div className="mb-6">
               <h3 className="font-heading font-bold text-2xl mb-2">Monthly Plan</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold text-foreground">$5</span>
+                <span className="text-5xl font-bold text-foreground">
+                  ${pricing.monthly?.current_price || 97}
+                </span>
                 <span className="text-muted-foreground">/month</span>
               </div>
-              <p className="text-muted-foreground mt-2">Flexible monthly subscription</p>
+              <p className="text-muted-foreground mt-2">
+                Flexible monthly subscription
+                {pricing.monthly?.discount_percentage ? ` • ${pricing.monthly.discount_percentage}% off` : ""}
+              </p>
             </div>
 
             <ul className="space-y-4 mb-8">
