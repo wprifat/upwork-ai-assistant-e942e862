@@ -177,9 +177,17 @@ export const PricingManagement = () => {
                   <Label>Base Price (${item.currency.toUpperCase()})</Label>
                   <Input
                     type="number"
-                    defaultValue={item.base_price}
+                    value={item.base_price}
+                    onChange={(e) => {
+                      const newBasePrice = parseFloat(e.target.value || "0");
+                      setPricing((prev) =>
+                        prev.map((p) =>
+                          p.id === item.id ? { ...p, base_price: newBasePrice } : p
+                        )
+                      );
+                    }}
                     onBlur={(e) => {
-                      const newBasePrice = parseFloat(e.target.value);
+                      const newBasePrice = parseFloat(e.target.value || "0");
                       if (newBasePrice !== item.base_price) {
                         updatePricing(item.product_name, newBasePrice, item.current_price, item.discount_percentage);
                       }
@@ -190,9 +198,17 @@ export const PricingManagement = () => {
                   <Label>Current Price</Label>
                   <Input
                     type="number"
-                    defaultValue={item.current_price}
+                    value={item.current_price}
+                    onChange={(e) => {
+                      const newPrice = parseFloat(e.target.value || "0");
+                      setPricing((prev) =>
+                        prev.map((p) =>
+                          p.id === item.id ? { ...p, current_price: newPrice } : p
+                        )
+                      );
+                    }}
                     onBlur={(e) => {
-                      const newPrice = parseFloat(e.target.value);
+                      const newPrice = parseFloat(e.target.value || "0");
                       if (newPrice !== item.current_price) {
                         updatePricing(item.product_name, item.base_price, newPrice, item.discount_percentage);
                       }
@@ -203,9 +219,17 @@ export const PricingManagement = () => {
                   <Label>Discount %</Label>
                   <Input
                     type="number"
-                    defaultValue={item.discount_percentage}
+                    value={item.discount_percentage}
+                    onChange={(e) => {
+                      const newDiscount = parseFloat(e.target.value || "0");
+                      setPricing((prev) =>
+                        prev.map((p) =>
+                          p.id === item.id ? { ...p, discount_percentage: newDiscount } : p
+                        )
+                      );
+                    }}
                     onBlur={(e) => {
-                      const newDiscount = parseFloat(e.target.value);
+                      const newDiscount = parseFloat(e.target.value || "0");
                       if (newDiscount !== item.discount_percentage) {
                         updatePricing(item.product_name, item.base_price, item.current_price, newDiscount);
                       }
