@@ -60,36 +60,41 @@ const handler = async (req: Request): Promise<Response> => {
                 max-width: 600px;
                 margin: 0 auto;
                 background-color: #ffffff;
+                border-radius: 12px;
+                overflow: hidden;
               }
               .email-header {
                 background: linear-gradient(135deg, #6FBF73 0%, #5A9F5D 100%);
                 padding: 40px 30px;
                 text-align: center;
+                border-radius: 12px 12px 0 0;
               }
               .logo-container {
                 display: inline-flex;
                 align-items: center;
-                gap: 12px;
+                gap: 10px;
               }
               .logo {
-                width: 48px;
-                height: 48px;
+                width: 40px;
+                height: 40px;
                 background-color: #ffffff;
-                border-radius: 12px;
+                border-radius: 8px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
               }
               .logo-text {
                 color: #6FBF73;
-                font-size: 28px;
+                font-size: 24px;
                 font-weight: bold;
+                line-height: 1;
               }
               .brand-name {
                 color: #ffffff;
-                font-size: 24px;
+                font-size: 22px;
                 font-weight: 700;
                 margin: 0;
+                line-height: 1;
               }
               .email-body {
                 padding: 40px 30px;
