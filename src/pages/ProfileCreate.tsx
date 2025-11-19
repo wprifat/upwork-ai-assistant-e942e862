@@ -6,11 +6,62 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { UserCircle, Save } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const ProfileCreate = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Profile updated successfully!");
+    setLoading(true);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const user = (await supabase.auth.getUser()).data.user;
+      
+      if (!user) {
+        toast.error("Please sign in to update your profile");
+        return;
+      }
+
+      // Update profile in database
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          full_name: formData.get('name') as string,
+          upwork_url: formData.get('upwork-url') as string,
+          title: formData.get('title') as string,
+          bio: formData.get('bio') as string,
+          skills: (formData.get('skills') as string)?.split(',').map(s => s.trim()) || [],
+          experience: formData.get('experience') as string,
+          hourly_rate: formData.get('hourly-rate') ? parseFloat(formData.get('hourly-rate') as string) : null,
+          portfolio: formData.get('portfolio') as string,
+        })
+        .eq('id', user.id);
+
+      if (profileError) throw profileError;
+
+      // Send welcome email
+      const { error: emailError } = await supabase.functions.invoke('send-profile-welcome', {
+        body: {
+          email: user.email,
+          name: formData.get('name') || user.email?.split('@')[0] || 'there',
+        }
+      });
+
+      if (emailError) {
+        console.error('Email error:', emailError);
+        // Don't fail the whole operation if email fails
+      }
+
+      toast.success("Profile updated successfully! Check your email for tips.");
+    } catch (error: any) {
+      console.error('Profile update error:', error);
+      toast.error(error.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,6 +89,7 @@ const ProfileCreate = () => {
                 <div>
                   <Label htmlFor="upwork-url">Upwork Profile URL</Label>
                   <Input 
+                    name="upwork-url"
                     id="upwork-url" 
                     placeholder="https://www.upwork.com/freelancers/~..." 
                     className="mt-2"
@@ -50,15 +102,18 @@ const ProfileCreate = () => {
                 <div>
                   <Label htmlFor="name">Full Name</Label>
                   <Input 
+                    name="name"
                     id="name" 
                     placeholder="John Doe" 
                     className="mt-2"
+                    required
                   />
                 </div>
 
                 <div>
                   <Label htmlFor="title">Professional Title</Label>
                   <Input 
+                    name="title"
                     id="title" 
                     placeholder="Full Stack Developer" 
                     className="mt-2"
@@ -68,6 +123,7 @@ const ProfileCreate = () => {
                 <div>
                   <Label htmlFor="bio">Professional Bio</Label>
                   <Textarea 
+                    name="bio"
                     id="bio" 
                     placeholder="Tell us about your experience and expertise..." 
                     className="mt-2 min-h-[120px]"
@@ -77,6 +133,7 @@ const ProfileCreate = () => {
                 <div>
                   <Label htmlFor="skills">Primary Skills (comma-separated)</Label>
                   <Textarea 
+                    name="skills"
                     id="skills" 
                     placeholder="React, Node.js, TypeScript, MongoDB, AWS..." 
                     className="mt-2 min-h-[100px]"
@@ -90,6 +147,7 @@ const ProfileCreate = () => {
                   <div>
                     <Label htmlFor="experience">Years of Experience</Label>
                     <Input 
+                      name="experience"
                       id="experience" 
                       type="number" 
                       placeholder="5" 
@@ -100,6 +158,7 @@ const ProfileCreate = () => {
                   <div>
                     <Label htmlFor="hourly-rate">Hourly Rate ($)</Label>
                     <Input 
+                      name="hourly-rate"
                       id="hourly-rate" 
                       type="number" 
                       placeholder="75" 
@@ -111,6 +170,7 @@ const ProfileCreate = () => {
                 <div>
                   <Label htmlFor="portfolio">Portfolio/Website URL</Label>
                   <Input 
+                    name="portfolio"
                     id="portfolio" 
                     type="url" 
                     placeholder="https://yourportfolio.com" 
@@ -119,11 +179,11 @@ const ProfileCreate = () => {
                 </div>
 
                 <div className="flex gap-4 pt-6">
-                  <Button type="submit" variant="hero" className="flex-1">
+                  <Button type="submit" variant="hero" className="flex-1" disabled={loading}>
                     <Save className="w-4 h-4 mr-2" />
-                    Save Profile
+                    {loading ? "Saving..." : "Save Profile"}
                   </Button>
-                  <Button type="button" variant="outline" className="flex-1">
+                  <Button type="button" variant="outline" className="flex-1" disabled={loading}>
                     Cancel
                   </Button>
                 </div>
