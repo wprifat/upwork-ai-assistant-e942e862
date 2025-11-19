@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -65,7 +66,12 @@ const PricingSection = () => {
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           {/* Lifetime Deal */}
           <div className="relative bg-card rounded-2xl p-8 shadow-card-active border-2 border-primary animate-fade-in-up">
-            <div className="absolute -top-4 right-8">
+            <div className="absolute -top-4 right-8 flex gap-2">
+              {pricing.lifetime?.discount_percentage ? (
+                <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {pricing.lifetime.discount_percentage}% OFF
+                </Badge>
+              ) : null}
               <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
                 <Zap className="w-4 h-4" />
                 Recommended
@@ -124,7 +130,14 @@ const PricingSection = () => {
           </div>
 
           {/* Monthly Plan */}
-          <div className="bg-card rounded-2xl p-8 shadow-card border border-border animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="relative bg-card rounded-2xl p-8 shadow-card border border-border animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            {pricing.monthly?.discount_percentage ? (
+              <div className="absolute -top-4 right-8">
+                <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {pricing.monthly.discount_percentage}% OFF
+                </Badge>
+              </div>
+            ) : null}
             <div className="mb-6">
               <h3 className="font-heading font-bold text-2xl mb-2">Monthly Plan</h3>
               <div className="flex items-baseline gap-2">
