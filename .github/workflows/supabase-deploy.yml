@@ -24,7 +24,7 @@ jobs:
           version: latest
 
       - name: Login to Supabase
-        run: supabase login "$VITE_SUPABASE_ACCESS_TOKEN"
+        run: supabase login --token "$VITE_SUPABASE_ACCESS_TOKEN"
 
       - name: Link Supabase Project
         run: supabase link --project-ref "$VITE_SUPABASE_PROJECT_ID"
