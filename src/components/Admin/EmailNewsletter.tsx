@@ -31,6 +31,9 @@ const EmailNewsletter = () => {
   const quillRef = useRef<ReactQuill>(null);
   const { toast } = useToast();
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseProjectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+
   const personalizationTokens = [
     { token: "{F_name}", description: "User's first name" },
     { token: "{Email}", description: "User's email address" },
@@ -114,7 +117,11 @@ const EmailNewsletter = () => {
           },
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error("send-newsletter invoke error", error);
+          throw error;
+        }
+
 
         toast({
           title: "Newsletter sent!",
@@ -128,9 +135,17 @@ const EmailNewsletter = () => {
       setScheduledDate(undefined);
       setScheduledTime("12:00");
     } catch (error: any) {
+      console.error("handleSendNewsletter error", error);
+      const description =
+        error?.message ||
+        error?.error?.message ||
+        typeof error === "string"
+          ? error
+          : "Failed to process newsletter";
+
       toast({
         title: "Error",
-        description: error.message || "Failed to process newsletter",
+        description,
         variant: "destructive",
       });
     } finally {
@@ -144,6 +159,9 @@ const EmailNewsletter = () => {
         <CardTitle>Send Email Newsletter</CardTitle>
         <CardDescription>
           Send a personalized newsletter to all registered users
+          <span className="mt-1 block text-xs text-muted-foreground">
+            Backend: {supabaseUrl || "not set"} (project: {supabaseProjectId || "not set"})
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
