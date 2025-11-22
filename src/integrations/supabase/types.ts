@@ -284,6 +284,7 @@ export type Database = {
       website_settings: {
         Row: {
           favicon_url: string | null
+          featured_image_url: string | null
           header_tracking_code: string | null
           id: string
           meta_description: string | null
@@ -293,6 +294,7 @@ export type Database = {
         }
         Insert: {
           favicon_url?: string | null
+          featured_image_url?: string | null
           header_tracking_code?: string | null
           id?: string
           meta_description?: string | null
@@ -302,6 +304,7 @@ export type Database = {
         }
         Update: {
           favicon_url?: string | null
+          featured_image_url?: string | null
           header_tracking_code?: string | null
           id?: string
           meta_description?: string | null

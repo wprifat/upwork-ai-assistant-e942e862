@@ -15,6 +15,7 @@ interface WebsiteSettings {
   favicon_url: string | null;
   meta_description: string | null;
   header_tracking_code: string | null;
+  featured_image_url: string | null;
 }
 
 const WebsiteSettings = () => {
@@ -104,6 +105,61 @@ const WebsiteSettings = () => {
     }
   };
 
+  const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `featured-${Date.now()}.${fileExt}`;
+      const filePath = fileName;
+
+      // Delete old featured image if exists
+      if (settings?.featured_image_url) {
+        const oldPath = settings.featured_image_url.split("/").pop();
+        if (oldPath) {
+          await supabase.storage.from("blog-images").remove([oldPath]);
+        }
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from("blog-images")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("blog-images").getPublicUrl(filePath);
+
+      setSettings((prev) => prev ? ({ ...prev, featured_image_url: publicUrl }) : null);
+
+      toast({
+        title: "Featured image uploaded",
+        description: "Featured image has been uploaded successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload featured image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!settings) return;
 
@@ -116,6 +172,7 @@ const WebsiteSettings = () => {
           favicon_url: settings.favicon_url,
           meta_description: settings.meta_description,
           header_tracking_code: settings.header_tracking_code,
+          featured_image_url: settings.featured_image_url,
           updated_by: user?.id,
         })
         .eq("id", settings.id);
@@ -236,6 +293,41 @@ const WebsiteSettings = () => {
           <p className="text-xs text-muted-foreground">
             {(settings.meta_description || "").length}/160 characters - Appears in search results
           </p>
+        </div>
+
+        {/* Featured Image */}
+        <div className="space-y-2">
+          <Label htmlFor="featured-image">Default Featured Image</Label>
+          <div className="flex gap-4 items-start">
+            <div className="flex-1">
+              <Input
+                id="featured-image"
+                type="file"
+                accept="image/*"
+                onChange={handleFeaturedImageUpload}
+                disabled={uploading}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Default image for pages and social media sharing (recommended: 1200x630px)
+              </p>
+            </div>
+            {settings.featured_image_url && (
+              <div className="flex flex-col items-center gap-2">
+                <img
+                  src={settings.featured_image_url}
+                  alt="Featured image preview"
+                  className="w-24 h-auto object-contain border border-border rounded"
+                />
+                <span className="text-xs text-muted-foreground">Current</span>
+              </div>
+            )}
+          </div>
+          {uploading && (
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <Upload className="h-4 w-4 animate-pulse" />
+              Uploading...
+            </p>
+          )}
         </div>
 
         {/* Header Tracking Code */}
