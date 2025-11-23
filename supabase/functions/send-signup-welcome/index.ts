@@ -35,6 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="description" content="Welcome to UpAssistentify! Get started with AI-powered proposal creation.">
             <style>
               body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -53,15 +54,13 @@ const handler = async (req: Request): Promise<Response> => {
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
               }
               .header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: #6fe042;
                 padding: 40px 30px;
                 text-align: center;
-                color: white;
               }
-              .header h1 {
-                margin: 0;
-                font-size: 32px;
-                font-weight: 700;
+              .header img {
+                max-width: 200px;
+                height: auto;
               }
               .content {
                 padding: 40px 30px;
@@ -97,8 +96,8 @@ const handler = async (req: Request): Promise<Response> => {
                 align-items: start;
               }
               .step-number {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: #6fe042;
+                color: #1a1a1a;
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
@@ -125,8 +124,8 @@ const handler = async (req: Request): Promise<Response> => {
               }
               .cta-button {
                 display: inline-block;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: #6fe042;
+                color: #1a1a1a;
                 padding: 16px 40px;
                 text-decoration: none;
                 border-radius: 8px;
@@ -153,77 +152,66 @@ const handler = async (req: Request): Promise<Response> => {
                 font-size: 14px;
               }
               .footer a {
-                color: #667eea;
+                color: #6fe042;
                 text-decoration: none;
+              }
+              .steps-list {
+                background: white;
+                padding: 20px;
+                margin: 20px 0;
+              }
+              .step-item {
+                margin-bottom: 15px;
+                padding-left: 10px;
               }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>UpAssistentify</h1>
+                <img src="https://vzjympxsxzerubkribos.supabase.co/storage/v1/object/public/blog-images/upassistentify-logo.png" alt="UpAssistentify" />
               </div>
               
               <div class="content">
                 <p class="greeting">Hi ${displayName}! 👋</p>
                 
                 <p class="message">
-                  Thank you for joining UpAssistentify! We're excited to help you discover 
-                  your perfect job matches using the power of AI. You're now part of a 
-                  community of professionals finding opportunities that truly match their skills.
+                  Thank you for joining UpAssistentify! We're excited to help you discover your perfect job opportunities using the power of AI — and to ensure you get the most out of your purchased Upwork Connects.
+                </p>
+                
+                <p class="message">
+                  Getting started is quick and easy. Just follow these four simple steps:
                 </p>
                 
                 <div class="steps-section">
-                  <h2>🚀 Get Started in 3 Easy Steps</h2>
+                  <h2>✨ How to Get Started</h2>
                   
-                  <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                      <div class="step-title">Complete Your Profile</div>
-                      <div class="step-description">
-                        Add your skills, experience, and preferences. The more complete your 
-                        profile, the better our AI can match you with opportunities.
-                      </div>
+                  <div class="steps-list">
+                    <div class="step-item">
+                      <strong>1.</strong> Log in using your UpAssistentify credentials.
+                    </div>
+                    
+                    <div class="step-item">
+                      <strong>2.</strong> Launch the app titled "Upwork Proposal Assistant."
+                    </div>
+                    
+                    <div class="step-item">
+                      <strong>3.</strong> Follow the on-screen instructions to set up your preferences.
+                    </div>
+                    
+                    <div class="step-item">
+                      <strong>4.</strong> Generate winning proposals using our AI-powered proposal creator and start applying with confidence.
                     </div>
                   </div>
-                  
-                  <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                      <div class="step-title">Browse AI-Matched Jobs</div>
-                      <div class="step-description">
-                        Our AI analyzes thousands of job postings and shows you the ones that 
-                        best match your profile with compatibility scores.
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                      <div class="step-title">Apply with AI Assistance</div>
-                      <div class="step-description">
-                        Use our AI-powered proposal generator to create compelling applications 
-                        that stand out from the crowd.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <center>
-                  <a href="${Deno.env.get('SITE_URL') || 'https://yourapp.lovable.app'}/profile-create" class="cta-button">
-                    Complete Your Profile →
-                  </a>
-                </center>
-                
-                <div class="highlight-box">
-                  <strong>💡 Pro Tip:</strong> Enable notifications to get instant alerts when 
-                  new high-scoring job matches become available. Early applications get better results!
                 </div>
                 
                 <p class="message" style="margin-top: 30px;">
-                  We're here to support you every step of the way. If you have any questions 
-                  or need help getting started, just reply to this email.
+                  If you have any questions or need support, we're always here to help — just reach out!
+                </p>
+                
+                <p class="message">
+                  Welcome aboard, and happy freelancing!<br>
+                  <strong>The UpAssistentify Team</strong>
                 </p>
               </div>
               
