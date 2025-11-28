@@ -36,7 +36,7 @@ const Dashboard = () => {
     fetchProfile();
   }, [user]);
   const handleLaunchApp = () => {
-    window.location.href = '/app';
+    window.location.href = 'https://proposal-assistant.upassistify.com/';
   };
 
   // Format subscription end date
