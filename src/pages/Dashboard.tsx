@@ -7,23 +7,20 @@ import { Rocket, CreditCard, UserCircle, HelpCircle, Loader2 } from "lucide-reac
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
 const Dashboard = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
-
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
-      
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-
+        const {
+          data,
+          error
+        } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
         if (error) {
           console.error('Error fetching profile:', error);
           toast.error('Failed to load profile data');
@@ -36,10 +33,8 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, [user]);
-
   const handleLaunchApp = () => {
     window.location.href = '/app';
   };
@@ -53,23 +48,17 @@ const Dashboard = () => {
       year: 'numeric'
     });
   };
-
   const userPlan = profile?.plan_type || 'free';
   const renewalDate = formatDate(profile?.subscription_end_date);
   const userName = profile?.full_name || user?.user_metadata?.full_name || "User";
   const userEmail = user?.email || "";
   const userNiche = profile?.title || "Not set";
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 py-20 bg-muted/30">
         <div className="container-custom">
@@ -89,17 +78,14 @@ const Dashboard = () => {
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Rocket className="w-6 h-6 text-primary" />
                     </div>
-                    <CardTitle className="text-2xl">Launch UpAssistify</CardTitle>
+                    <CardTitle className="text-2xl">Launch Proposal Assistant                </CardTitle>
                   </div>
                   <CardDescription className="text-base">
                     Open your AI-powered Upwork Proposal Assistant.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Button 
-                    onClick={handleLaunchApp}
-                    className="w-full h-12 text-lg"
-                  >
+                  <Button onClick={handleLaunchApp} className="w-full h-12 text-lg">
                     Launch App
                   </Button>
                 </CardContent>
@@ -118,26 +104,20 @@ const Dashboard = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  {userPlan === "lifetime" ? (
-                    <div className="text-center py-8">
+                  {userPlan === "lifetime" ? <div className="text-center py-8">
                       <p className="text-3xl font-bold text-primary mb-2">Lifetime Access</p>
                       <p className="text-muted-foreground">You have unlimited access to UpAssistify</p>
-                    </div>
-                  ) : userPlan === "monthly" ? (
-                    <div className="text-center py-8">
+                    </div> : userPlan === "monthly" ? <div className="text-center py-8">
                       <p className="text-xl font-semibold mb-2">Monthly Subscription</p>
                       <p className="text-muted-foreground">Your subscription renews on:</p>
                       <p className="text-2xl font-bold text-primary mt-2">{renewalDate || "Not available"}</p>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
+                    </div> : <div className="text-center py-8">
                       <p className="text-2xl font-semibold mb-2">Free Plan</p>
                       <p className="text-muted-foreground mb-4">Upgrade to unlock all features</p>
                       <Button onClick={() => window.location.href = '/checkout'}>
                         Upgrade Now
                       </Button>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
               </Card>
             </div>
@@ -185,11 +165,7 @@ const Dashboard = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-12 text-lg"
-                    onClick={() => window.location.href = '/contact'}
-                  >
+                  <Button variant="outline" className="w-full h-12 text-lg" onClick={() => window.location.href = '/contact'}>
                     Contact Us
                   </Button>
                 </CardContent>
@@ -199,8 +175,6 @@ const Dashboard = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
