@@ -39,7 +39,7 @@ const Dashboard = () => {
   const handleLaunchApp = () => {
     setLaunching(true);
     setTimeout(() => {
-      window.location.href = 'https://proposal-assistant.upassistify.com/';
+      window.location.href = '/app';
     }, 500);
   };
 
