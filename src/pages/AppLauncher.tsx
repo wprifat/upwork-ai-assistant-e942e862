@@ -121,7 +121,7 @@ const AppLauncher = () => {
         {/* Iframe */}
         <iframe
           key={iframeKey}
-          src="https://upa.webworkmedia.net/"
+          src="https://proposal-assistant.upassistify.com/"
           className="w-full h-full border-0"
           title="UpAssistify Application"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
