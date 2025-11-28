@@ -12,6 +12,7 @@ const Dashboard = () => {
     user
   } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [launching, setLaunching] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   useEffect(() => {
     const fetchProfile = async () => {
@@ -36,7 +37,10 @@ const Dashboard = () => {
     fetchProfile();
   }, [user]);
   const handleLaunchApp = () => {
-    window.location.href = 'https://proposal-assistant.upassistify.com/';
+    setLaunching(true);
+    setTimeout(() => {
+      window.location.href = 'https://proposal-assistant.upassistify.com/';
+    }, 500);
   };
 
   // Format subscription end date
@@ -85,8 +89,19 @@ const Dashboard = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Button onClick={handleLaunchApp} className="w-full h-12 text-lg">
-                    Launch App
+                  <Button 
+                    onClick={handleLaunchApp} 
+                    className="w-full h-12 text-lg" 
+                    disabled={launching}
+                  >
+                    {launching ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Launching...
+                      </>
+                    ) : (
+                      'Launch App'
+                    )}
                   </Button>
                 </CardContent>
               </Card>
