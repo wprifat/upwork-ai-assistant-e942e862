@@ -157,8 +157,8 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            {/* Profile Card */}
-            <div className="animate-fade-in-up">
+            {/* Profile Card with Saved Profile & Cover Letters */}
+            <div className="animate-fade-in-up lg:col-span-2">
               <Card className="p-8 shadow-card border border-border h-full">
                 <CardHeader className="p-0 mb-6">
                   <div className="flex items-center gap-3 mb-2">
@@ -168,125 +168,112 @@ const Dashboard = () => {
                     <CardTitle className="text-2xl">Your Profile</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="p-0 space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="text-lg font-semibold">{userName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="text-lg font-semibold">{userEmail}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Niche</p>
-                    <p className="text-lg font-semibold">{userNiche}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Save Profile Section */}
-            <div className="animate-fade-in-up">
-              <Card className="p-8 shadow-card border border-border h-full">
-                <CardHeader className="p-0 mb-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-primary" />
+                <CardContent className="p-0 space-y-6">
+                  {/* Basic Info */}
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Name</p>
+                      <p className="text-lg font-semibold">{userName}</p>
                     </div>
-                    <CardTitle className="text-2xl">Saved Profile</CardTitle>
-                  </div>
-                  <CardDescription className="text-base">
-                    Your synced Upwork profile data
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-0 space-y-4">
-                  {profile?.profile_text ? (
-                    <>
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <p className="text-sm text-muted-foreground line-clamp-4">
-                          {profile.profile_text}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="flex-1"
-                          onClick={() => handleCopyText(profile.profile_text, 'Profile')}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy Profile
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => window.location.href = '/profile-sync'}
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <Button 
-                      className="w-full" 
-                      onClick={() => window.location.href = '/profile-sync'}
-                    >
-                      Save Your Profile
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Draft Cover Letters Section */}
-            <div className="animate-fade-in-up">
-              <Card className="p-8 shadow-card border border-border h-full">
-                <CardHeader className="p-0 mb-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-primary" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="text-lg font-semibold">{userEmail}</p>
                     </div>
-                    <CardTitle className="text-2xl">Draft Cover Letters</CardTitle>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Niche</p>
+                      <p className="text-lg font-semibold">{userNiche}</p>
+                    </div>
                   </div>
-                  <CardDescription className="text-base">
-                    Your saved cover letter templates ({coverLetters.length}/2)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-0 space-y-4">
-                  {coverLetters.length > 0 ? (
-                    <>
-                      {coverLetters.map((letter) => (
-                        <div key={letter.id} className="bg-muted/50 p-4 rounded-lg">
-                          <div className="flex items-start justify-between mb-2">
-                            <p className="font-semibold">{letter.title}</p>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCopyText(letter.content, 'Cover letter')}
-                            >
-                              <Copy className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {letter.content}
+
+                  <div className="h-px bg-border" />
+
+                  {/* Saved Profile */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="w-5 h-5 text-primary" />
+                      <h3 className="text-lg font-semibold">Saved Upwork Profile</h3>
+                    </div>
+                    {profile?.profile_text ? (
+                      <>
+                        <div className="bg-muted/50 p-4 rounded-lg mb-3">
+                          <p className="text-sm text-muted-foreground line-clamp-4">
+                            {profile.profile_text}
                           </p>
                         </div>
-                      ))}
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => handleCopyText(profile.profile_text, 'Profile')}
+                          >
+                            <Copy className="w-4 h-4 mr-2" />
+                            Copy Profile
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => window.location.href = '/profile-sync'}
+                          >
+                            Edit
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
                       <Button 
-                        variant="outline"
+                        className="w-full" 
+                        onClick={() => window.location.href = '/profile-sync'}
+                      >
+                        Save Your Profile
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="h-px bg-border" />
+
+                  {/* Draft Cover Letters */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="w-5 h-5 text-primary" />
+                      <h3 className="text-lg font-semibold">Draft Cover Letters ({coverLetters.length}/2)</h3>
+                    </div>
+                    {coverLetters.length > 0 ? (
+                      <>
+                        <div className="space-y-3 mb-3">
+                          {coverLetters.map((letter) => (
+                            <div key={letter.id} className="bg-muted/50 p-4 rounded-lg">
+                              <div className="flex items-start justify-between mb-2">
+                                <p className="font-semibold">{letter.title}</p>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleCopyText(letter.content, 'Cover letter')}
+                                >
+                                  <Copy className="w-4 h-4" />
+                                </Button>
+                              </div>
+                              <p className="text-sm text-muted-foreground line-clamp-2">
+                                {letter.content}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <Button 
+                          variant="outline"
+                          className="w-full" 
+                          onClick={() => window.location.href = '/cover-letters'}
+                          disabled={coverLetters.length >= 2}
+                        >
+                          {coverLetters.length >= 2 ? 'Maximum Reached' : 'Add Cover Letter'}
+                        </Button>
+                      </>
+                    ) : (
+                      <Button 
                         className="w-full" 
                         onClick={() => window.location.href = '/cover-letters'}
-                        disabled={coverLetters.length >= 2}
                       >
-                        {coverLetters.length >= 2 ? 'Maximum Reached' : 'Add Cover Letter'}
+                        Save Draft Cover Letters
                       </Button>
-                    </>
-                  ) : (
-                    <Button 
-                      className="w-full" 
-                      onClick={() => window.location.href = '/cover-letters'}
-                    >
-                      Save Draft Cover Letters
-                    </Button>
-                  )}
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </div>
