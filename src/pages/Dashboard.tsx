@@ -93,41 +93,64 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Main Tool Card */}
+          {/* Main Action - Launch App */}
+          <div className="mb-12 animate-fade-in-up">
+            <Card className="p-8 shadow-card border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Rocket className="w-8 h-8 text-primary" />
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h2 className="text-2xl font-bold mb-2">Launch Proposal Assistant</h2>
+                  <p className="text-muted-foreground">
+                    Open your AI-powered Upwork Proposal Assistant
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleLaunchApp} 
+                  size="lg"
+                  className="h-14 px-8 text-lg min-w-[200px]" 
+                  disabled={launching}
+                >
+                  {launching ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Launching...
+                    </>
+                  ) : (
+                    'Launch App'
+                  )}
+                </Button>
+              </div>
+            </Card>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Your Profile */}
             <div className="animate-fade-in-up">
               <Card className="p-8 shadow-card border border-border h-full">
                 <CardHeader className="p-0 mb-6">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Rocket className="w-6 h-6 text-primary" />
+                      <UserCircle className="w-6 h-6 text-primary" />
                     </div>
-                    <CardTitle className="text-2xl">Launch Proposal Assistant                </CardTitle>
+                    <CardTitle className="text-2xl">Your Profile</CardTitle>
                   </div>
-                  <CardDescription className="text-base">
-                    Open your AI-powered Upwork Proposal Assistant.
-                  </CardDescription>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <Button 
-                    onClick={handleLaunchApp} 
-                    className="w-full h-12 text-lg" 
-                    disabled={launching}
-                  >
-                    {launching ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Launching...
-                      </>
-                    ) : (
-                      'Launch App'
-                    )}
-                  </Button>
+                <CardContent className="p-0 space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Name</p>
+                    <p className="text-lg font-semibold">{userName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="text-lg font-semibold">{userEmail}</p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Plan Card */}
+            {/* Your Plan */}
             <div className="animate-fade-in-up">
               <Card className="p-8 shadow-card border border-border h-full">
                 <CardHeader className="p-0 mb-6">
@@ -139,146 +162,31 @@ const Dashboard = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  {userPlan === "lifetime" ? <div className="text-center py-8">
-                      <p className="text-3xl font-bold text-primary mb-2">Lifetime Access</p>
-                      <p className="text-muted-foreground">You have unlimited access to UpAssistify</p>
-                    </div> : userPlan === "monthly" ? <div className="text-center py-8">
+                  {userPlan === "lifetime" ? (
+                    <div className="text-center py-4">
+                      <p className="text-2xl font-bold text-primary mb-2">Lifetime Access</p>
+                      <p className="text-muted-foreground">Unlimited access to UpAssistify</p>
+                    </div>
+                  ) : userPlan === "monthly" ? (
+                    <div className="text-center py-4">
                       <p className="text-xl font-semibold mb-2">Monthly Subscription</p>
-                      <p className="text-muted-foreground">Your subscription renews on:</p>
-                      <p className="text-2xl font-bold text-primary mt-2">{renewalDate || "Not available"}</p>
-                    </div> : <div className="text-center py-8">
-                      <p className="text-2xl font-semibold mb-2">Free Plan</p>
-                      <p className="text-muted-foreground mb-4">Upgrade to unlock all features</p>
+                      <p className="text-sm text-muted-foreground mb-1">Renews on:</p>
+                      <p className="text-xl font-bold text-primary">{renewalDate || "Not available"}</p>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-xl font-semibold mb-2">Free Plan</p>
+                      <p className="text-sm text-muted-foreground mb-4">Upgrade to unlock all features</p>
                       <Button onClick={() => window.location.href = '/checkout'}>
                         Upgrade Now
                       </Button>
-                    </div>}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Profile Card with Saved Profile & Cover Letters */}
-            <div className="animate-fade-in-up lg:col-span-2">
-              <Card className="p-8 shadow-card border border-border h-full">
-                <CardHeader className="p-0 mb-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <UserCircle className="w-6 h-6 text-primary" />
-                    </div>
-                    <CardTitle className="text-2xl">Your Profile</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0 space-y-6">
-                  {/* Basic Info */}
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Name</p>
-                      <p className="text-lg font-semibold">{userName}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="text-lg font-semibold">{userEmail}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Niche</p>
-                      <p className="text-lg font-semibold">{userNiche}</p>
-                    </div>
-                  </div>
-
-                  <div className="h-px bg-border" />
-
-                  {/* Saved Profile */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <FileText className="w-5 h-5 text-primary" />
-                      <h3 className="text-lg font-semibold">Saved Upwork Profile</h3>
-                    </div>
-                    {profile?.profile_text ? (
-                      <>
-                        <div className="bg-muted/50 p-4 rounded-lg mb-3">
-                          <p className="text-sm text-muted-foreground line-clamp-4">
-                            {profile.profile_text}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            className="flex-1"
-                            onClick={() => handleCopyText(profile.profile_text, 'Profile')}
-                          >
-                            <Copy className="w-4 h-4 mr-2" />
-                            Copy Profile
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => window.location.href = '/profile-sync'}
-                          >
-                            Edit
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <Button 
-                        className="w-full" 
-                        onClick={() => window.location.href = '/profile-sync'}
-                      >
-                        Save Your Profile
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="h-px bg-border" />
-
-                  {/* Draft Cover Letters */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <FileText className="w-5 h-5 text-primary" />
-                      <h3 className="text-lg font-semibold">Draft Cover Letters ({coverLetters.length}/2)</h3>
-                    </div>
-                    {coverLetters.length > 0 ? (
-                      <>
-                        <div className="space-y-3 mb-3">
-                          {coverLetters.map((letter) => (
-                            <div key={letter.id} className="bg-muted/50 p-4 rounded-lg">
-                              <div className="flex items-start justify-between mb-2">
-                                <p className="font-semibold">{letter.title}</p>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleCopyText(letter.content, 'Cover letter')}
-                                >
-                                  <Copy className="w-4 h-4" />
-                                </Button>
-                              </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {letter.content}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        <Button 
-                          variant="outline"
-                          className="w-full" 
-                          onClick={() => window.location.href = '/cover-letters'}
-                          disabled={coverLetters.length >= 2}
-                        >
-                          {coverLetters.length >= 2 ? 'Maximum Reached' : 'Add Cover Letter'}
-                        </Button>
-                      </>
-                    ) : (
-                      <Button 
-                        className="w-full" 
-                        onClick={() => window.location.href = '/cover-letters'}
-                      >
-                        Save Draft Cover Letters
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Support Section */}
+            {/* Support */}
             <div className="animate-fade-in-up">
               <Card className="p-8 shadow-card border border-border h-full">
                 <CardHeader className="p-0 mb-6">
@@ -288,14 +196,132 @@ const Dashboard = () => {
                     </div>
                     <CardTitle className="text-2xl">Support</CardTitle>
                   </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-12" 
+                    onClick={() => window.location.href = '/contact'}
+                  >
+                    Contact Us
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Your Saved Data - Full Width */}
+            <div className="animate-fade-in-up lg:col-span-3">
+              <Card className="p-8 shadow-card border border-border">
+                <CardHeader className="p-0 mb-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl">Your Saved Data</CardTitle>
+                  </div>
                   <CardDescription className="text-base">
-                    We're here to help you succeed
+                    Manage your saved Upwork profile and cover letter templates
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Button variant="outline" className="w-full h-12 text-lg" onClick={() => window.location.href = '/contact'}>
-                    Contact Us
-                  </Button>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {/* Saved Upwork Profile */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <UserCircle className="w-4 h-4 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold">Upwork Profile</h3>
+                      </div>
+                      {profile?.profile_text ? (
+                        <>
+                          <div className="bg-muted/50 p-4 rounded-lg mb-3 min-h-[120px]">
+                            <p className="text-sm text-muted-foreground line-clamp-4">
+                              {profile.profile_text}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              className="flex-1"
+                              onClick={() => handleCopyText(profile.profile_text, 'Profile')}
+                            >
+                              <Copy className="w-4 h-4 mr-2" />
+                              Copy
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => window.location.href = '/profile-sync'}
+                            >
+                              Edit
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                          <p className="text-muted-foreground mb-4">No profile saved yet</p>
+                          <Button 
+                            onClick={() => window.location.href = '/profile-sync'}
+                          >
+                            Save Your Profile
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Draft Cover Letters */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <FileText className="w-4 h-4 text-primary" />
+                          </div>
+                          <h3 className="text-lg font-semibold">Cover Letters</h3>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{coverLetters.length}/2</span>
+                      </div>
+                      {coverLetters.length > 0 ? (
+                        <>
+                          <div className="space-y-3 mb-3">
+                            {coverLetters.map((letter) => (
+                              <div key={letter.id} className="bg-muted/50 p-4 rounded-lg">
+                                <div className="flex items-start justify-between mb-2">
+                                  <p className="font-semibold text-sm">{letter.title}</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleCopyText(letter.content, 'Cover letter')}
+                                  >
+                                    <Copy className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                  {letter.content}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                          <Button 
+                            variant="outline"
+                            className="w-full" 
+                            onClick={() => window.location.href = '/cover-letters'}
+                            disabled={coverLetters.length >= 2}
+                          >
+                            {coverLetters.length >= 2 ? 'Maximum Reached (2/2)' : 'Add Cover Letter'}
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                          <p className="text-muted-foreground mb-4">No cover letters saved</p>
+                          <Button 
+                            onClick={() => window.location.href = '/cover-letters'}
+                          >
+                            Add Cover Letter
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
