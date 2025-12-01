@@ -7,6 +7,7 @@ import { WebsiteMetaTags } from "@/hooks/useWebsiteSettings";
 import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import VerifyEmail from "./pages/VerifyEmail";
 import Dashboard from "./pages/Dashboard";
 import ProfileCreate from "./pages/ProfileCreate";
 import ProfileSync from "./pages/ProfileSync";
@@ -39,6 +40,14 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
+          <Route 
+            path="/verify-email" 
+            element={
+              <ProtectedRoute>
+                <VerifyEmail />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkout/complete" element={<CheckoutComplete />} />
           <Route path="/blog" element={<Blog />} />
