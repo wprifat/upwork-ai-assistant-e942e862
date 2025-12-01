@@ -56,14 +56,6 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
-        // Send custom branded reset email
-        await supabase.functions.invoke('send-password-reset', {
-          body: {
-            email: validatedEmail,
-            resetLink: `${window.location.origin}/reset-password`,
-          }
-        }).catch(err => console.error('Custom email error:', err));
-
         toast({
           title: "Check your email",
           description: "We sent you a password reset link.",
