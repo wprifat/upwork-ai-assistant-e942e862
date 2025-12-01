@@ -107,6 +107,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cover_letters: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pricing_settings: {
         Row: {
           base_price: number
@@ -160,6 +187,7 @@ export type Database = {
           id: string
           plan_type: Database["public"]["Enums"]["plan_type"]
           portfolio: string | null
+          profile_text: string | null
           skills: string[] | null
           subscription_end_date: string | null
           title: string | null
@@ -176,6 +204,7 @@ export type Database = {
           id: string
           plan_type?: Database["public"]["Enums"]["plan_type"]
           portfolio?: string | null
+          profile_text?: string | null
           skills?: string[] | null
           subscription_end_date?: string | null
           title?: string | null
@@ -192,6 +221,7 @@ export type Database = {
           id?: string
           plan_type?: Database["public"]["Enums"]["plan_type"]
           portfolio?: string | null
+          profile_text?: string | null
           skills?: string[] | null
           subscription_end_date?: string | null
           title?: string | null

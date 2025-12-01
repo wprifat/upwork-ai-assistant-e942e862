@@ -9,6 +9,8 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfileCreate from "./pages/ProfileCreate";
+import ProfileSync from "./pages/ProfileSync";
+import CoverLetterEditor from "./pages/CoverLetterEditor";
 import Checkout from "./pages/Checkout";
 import CheckoutComplete from "./pages/CheckoutComplete";
 import NotFound from "./pages/NotFound";
@@ -75,6 +77,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ProfileCreate />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile-sync" 
+            element={
+              <ProtectedRoute>
+                <ProfileSync />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/cover-letters" 
+            element={
+              <ProtectedRoute>
+                <CoverLetterEditor />
               </ProtectedRoute>
             } 
           />
