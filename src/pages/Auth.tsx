@@ -8,6 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import { z } from "zod";
+
+// Validation schemas
+const emailSchema = z.string().trim().email({ message: "Invalid email address" }).max(255);
+const passwordSchema = z.string().min(8, { message: "Password must be at least 8 characters" }).max(72);
+const fullNameSchema = z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100);
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,6 +21,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -29,20 +37,70 @@ const Auth = () => {
     checkUser();
   }, [navigate]);
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Validate email
+      const validatedEmail = emailSchema.parse(resetEmail);
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(validatedEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) {
+        toast({
+          title: "Reset failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Check your email",
+          description: "We sent you a password reset link.",
+        });
+        setShowResetPassword(false);
+        setResetEmail("");
+      }
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid email",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Validate inputs
+      const validatedEmail = emailSchema.parse(email);
+      const validatedPassword = passwordSchema.parse(password);
+      const validatedFullName = fullNameSchema.parse(fullName);
+
       const redirectUrl = `${window.location.origin}/dashboard`;
       
       const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: validatedEmail,
+        password: validatedPassword,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: fullName,
+            full_name: validatedFullName,
           },
         },
       });
@@ -66,7 +124,7 @@ const Auth = () => {
         supabase.functions.invoke('send-signup-welcome', {
           body: {
             email: data.user.email,
-            name: fullName || data.user.email?.split('@')[0],
+            name: validatedFullName || data.user.email?.split('@')[0],
           }
         }).catch(err => console.error('Email error:', err));
 
@@ -78,11 +136,19 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -93,9 +159,13 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate inputs
+      const validatedEmail = emailSchema.parse(email);
+      const validatedPassword = passwordSchema.parse(password);
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: validatedEmail,
+        password: validatedPassword,
       });
 
       if (error) {
@@ -120,11 +190,19 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -147,7 +225,57 @@ const Auth = () => {
           </div>
 
           <div className="bg-card rounded-2xl shadow-card p-8">
-            <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-6">
+            {showResetPassword ? (
+              <form onSubmit={handleResetPassword} className="space-y-6">
+                <div>
+                  <Label htmlFor="resetEmail">Email</Label>
+                  <Input
+                    id="resetEmail"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    We'll send you a link to reset your password
+                  </p>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending reset link...
+                    </>
+                  ) : (
+                    <>Send Reset Link</>
+                  )}
+                </Button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowResetPassword(false);
+                      setResetEmail("");
+                    }}
+                    className="text-sm text-primary hover:underline"
+                    disabled={loading}
+                  >
+                    Back to sign in
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-6">
               {!isLogin && (
                 <div>
                   <Label htmlFor="fullName">Full Name</Label>
@@ -178,60 +306,75 @@ const Auth = () => {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                <div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        onClick={() => setShowResetPassword(true)}
+                        className="text-xs text-primary hover:underline"
+                        disabled={loading}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="mt-1"
+                    minLength={8}
+                  />
+                  {!isLogin && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Must be at least 8 characters
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
                   disabled={loading}
-                  className="mt-1"
-                  minLength={6}
-                />
-                {!isLogin && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Must be at least 6 characters
-                  </p>
-                )}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isLogin ? "Signing in..." : "Creating account..."}
+                    </>
+                  ) : (
+                    <>{isLogin ? "Sign In" : "Create Account"}</>
+                  )}
+                </Button>
+              </form>
+            )}
+
+            {!showResetPassword && (
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setEmail("");
+                    setPassword("");
+                    setFullName("");
+                  }}
+                  className="text-sm text-primary hover:underline"
+                  disabled={loading}
+                >
+                  {isLogin
+                    ? "Don't have an account? Sign up"
+                    : "Already have an account? Sign in"}
+                </button>
               </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isLogin ? "Signing in..." : "Creating account..."}
-                  </>
-                ) : (
-                  <>{isLogin ? "Sign In" : "Create Account"}</>
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setEmail("");
-                  setPassword("");
-                  setFullName("");
-                }}
-                className="text-sm text-primary hover:underline"
-                disabled={loading}
-              >
-                {isLogin
-                  ? "Don't have an account? Sign up"
-                  : "Already have an account? Sign in"}
-              </button>
-            </div>
+            )}
           </div>
 
           <p className="text-center text-xs text-muted-foreground">
