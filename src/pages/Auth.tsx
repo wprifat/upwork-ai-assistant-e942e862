@@ -130,10 +130,10 @@ const Auth = () => {
 
         toast({
           title: "Account created!",
-          description: "Welcome to UpAssistify. Check your email for next steps!",
+          description: "Please check your email to verify your account.",
         });
-        // Auto-confirm is enabled, so redirect immediately
-        navigate("/dashboard");
+        // Redirect to verification page
+        navigate("/verify-email");
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
