@@ -3,7 +3,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Rocket, CreditCard, UserCircle, HelpCircle, Loader2 } from "lucide-react";
+import { Rocket, CreditCard, UserCircle, HelpCircle, Loader2, FileText, Copy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -14,19 +14,34 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [launching, setLaunching] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const [coverLetters, setCoverLetters] = useState<any[]>([]);
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       if (!user) return;
       try {
-        const {
-          data,
-          error
-        } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
-        if (error) {
-          console.error('Error fetching profile:', error);
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
           toast.error('Failed to load profile data');
         } else {
-          setProfile(data);
+          setProfile(profileData);
+        }
+
+        const { data: lettersData, error: lettersError } = await supabase
+          .from('cover_letters')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (lettersError) {
+          console.error('Error fetching cover letters:', lettersError);
+        } else {
+          setCoverLetters(lettersData || []);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -34,13 +49,18 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchData();
   }, [user]);
   const handleLaunchApp = () => {
     setLaunching(true);
     setTimeout(() => {
       window.location.href = '/app';
     }, 500);
+  };
+
+  const handleCopyText = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard!`);
   };
 
   // Format subscription end date
@@ -161,6 +181,112 @@ const Dashboard = () => {
                     <p className="text-sm text-muted-foreground">Niche</p>
                     <p className="text-lg font-semibold">{userNiche}</p>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Save Profile Section */}
+            <div className="animate-fade-in-up">
+              <Card className="p-8 shadow-card border border-border h-full">
+                <CardHeader className="p-0 mb-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl">Saved Profile</CardTitle>
+                  </div>
+                  <CardDescription className="text-base">
+                    Your synced Upwork profile data
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 space-y-4">
+                  {profile?.profile_text ? (
+                    <>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <p className="text-sm text-muted-foreground line-clamp-4">
+                          {profile.profile_text}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => handleCopyText(profile.profile_text, 'Profile')}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy Profile
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => window.location.href = '/profile-sync'}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      onClick={() => window.location.href = '/profile-sync'}
+                    >
+                      Save Your Profile
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Draft Cover Letters Section */}
+            <div className="animate-fade-in-up">
+              <Card className="p-8 shadow-card border border-border h-full">
+                <CardHeader className="p-0 mb-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl">Draft Cover Letters</CardTitle>
+                  </div>
+                  <CardDescription className="text-base">
+                    Your saved cover letter templates ({coverLetters.length}/2)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 space-y-4">
+                  {coverLetters.length > 0 ? (
+                    <>
+                      {coverLetters.map((letter) => (
+                        <div key={letter.id} className="bg-muted/50 p-4 rounded-lg">
+                          <div className="flex items-start justify-between mb-2">
+                            <p className="font-semibold">{letter.title}</p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopyText(letter.content, 'Cover letter')}
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {letter.content}
+                          </p>
+                        </div>
+                      ))}
+                      <Button 
+                        variant="outline"
+                        className="w-full" 
+                        onClick={() => window.location.href = '/cover-letters'}
+                        disabled={coverLetters.length >= 2}
+                      >
+                        {coverLetters.length >= 2 ? 'Maximum Reached' : 'Add Cover Letter'}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      onClick={() => window.location.href = '/cover-letters'}
+                    >
+                      Save Draft Cover Letters
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
