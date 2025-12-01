@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import VerifyEmail from "./pages/VerifyEmail";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ProfileCreate from "./pages/ProfileCreate";
 import ProfileSync from "./pages/ProfileSync";
@@ -48,6 +49,7 @@ const App = () => (
               </ProtectedRoute>
             } 
           />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkout/complete" element={<CheckoutComplete />} />
           <Route path="/blog" element={<Blog />} />
