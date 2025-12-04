@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft, Lock, User } from "lucide-react";
+import { Loader2, ArrowLeft, Lock, User, Tag, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Layout/Header";
@@ -38,7 +38,27 @@ const profileSchema = z.object({
   title: z.string().trim().max(100).optional(),
 });
 
-const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planType: string }) => {
+const couponSchema = z.string().trim().min(1, "Coupon code is required").max(50, "Coupon code is too long");
+
+interface CouponData {
+  valid: boolean;
+  couponId: string;
+  code: string;
+  discountType: string;
+  discountValue: number;
+  discountAmount: number;
+  finalPrice: number;
+  stripeCouponId?: string;
+}
+
+interface CheckoutFormProps {
+  plan: typeof plans.lifetime;
+  planType: string;
+  appliedCoupon: CouponData | null;
+  finalPrice: number;
+}
+
+const CheckoutForm = ({ plan, planType, appliedCoupon, finalPrice }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -106,7 +126,8 @@ const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planTyp
           email: formData.email,
           name: formData.fullName,
           plan: planType,
-          amount: plan.price,
+          amount: finalPrice,
+          couponCode: appliedCoupon?.code,
         }
       }).catch(err => console.error('Email error:', err));
 
@@ -203,15 +224,21 @@ const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planTyp
           <div className="flex items-center justify-between mb-2">
             <span className="font-semibold">{plan.name}</span>
             <div className="text-right">
-              <span className="text-2xl font-bold text-primary">${plan.price}</span>
-              {plan.originalPrice && (
+              <span className="text-2xl font-bold text-primary">${finalPrice}</span>
+              {(plan.originalPrice || appliedCoupon) && (
                 <span className="text-sm text-muted-foreground line-through ml-2">
-                  ${plan.originalPrice}
+                  ${plan.originalPrice || plan.price}
                 </span>
               )}
             </div>
           </div>
           <p className="text-sm text-muted-foreground">{plan.description}</p>
+          {appliedCoupon && (
+            <div className="mt-2 flex items-center gap-2 text-sm text-primary">
+              <Tag className="w-4 h-4" />
+              <span>Coupon "{appliedCoupon.code}" applied - You save ${appliedCoupon.discountAmount.toFixed(2)}</span>
+            </div>
+          )}
         </div>
 
         <PaymentElement />
@@ -229,7 +256,7 @@ const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planTyp
             Processing...
           </>
         ) : (
-          `Complete Purchase - $${plan.price}`
+          `Complete Purchase - $${finalPrice}`
         )}
       </Button>
 
@@ -241,56 +268,197 @@ const CheckoutForm = ({ plan, planType }: { plan: typeof plans.lifetime, planTyp
   );
 };
 
+const CouponInput = ({ 
+  originalPrice, 
+  onCouponApplied 
+}: { 
+  originalPrice: number; 
+  onCouponApplied: (coupon: CouponData | null) => void;
+}) => {
+  const [couponCode, setCouponCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
+  const { toast } = useToast();
+
+  const handleApplyCoupon = async () => {
+    setError(null);
+
+    // Validate coupon code
+    const validation = couponSchema.safeParse(couponCode);
+    if (!validation.success) {
+      setError(validation.error.errors[0].message);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data, error: funcError } = await supabase.functions.invoke("validate-coupon", {
+        body: { code: couponCode.trim(), originalPrice },
+      });
+
+      if (funcError) throw funcError;
+
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+
+      setAppliedCoupon(data);
+      onCouponApplied(data);
+      toast({
+        title: "Coupon Applied!",
+        description: `You saved $${data.discountAmount.toFixed(2)}`,
+      });
+    } catch (err: any) {
+      console.error("Error applying coupon:", err);
+      setError(err.message || "Failed to apply coupon");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setError(null);
+    onCouponApplied(null);
+    toast({
+      title: "Coupon Removed",
+      description: "The coupon has been removed from your order.",
+    });
+  };
+
+  if (appliedCoupon) {
+    return (
+      <Card className="p-4 border-primary/20 bg-primary/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Check className="w-5 h-5 text-primary" />
+            <div>
+              <p className="font-medium text-sm">Coupon Applied</p>
+              <p className="text-xs text-muted-foreground">
+                {appliedCoupon.code} - {appliedCoupon.discountType === "percentage" 
+                  ? `${appliedCoupon.discountValue}% off` 
+                  : `$${appliedCoupon.discountValue} off`}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRemoveCoupon}
+            className="text-destructive hover:text-destructive"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Tag className="w-4 h-4 text-muted-foreground" />
+        <span className="text-sm font-medium">Have a coupon code?</span>
+      </div>
+      <div className="flex gap-2">
+        <Input
+          value={couponCode}
+          onChange={(e) => {
+            setCouponCode(e.target.value.toUpperCase());
+            setError(null);
+          }}
+          placeholder="Enter coupon code"
+          className={error ? "border-destructive" : ""}
+          disabled={loading}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleApplyCoupon}
+          disabled={loading || !couponCode.trim()}
+        >
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+        </Button>
+      </div>
+      {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+    </Card>
+  );
+};
+
 const CheckoutComplete = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
+  const [isCreatingIntent, setIsCreatingIntent] = useState(false);
   
   const planType = searchParams.get("plan") as keyof typeof plans;
   const plan = plans[planType];
 
-  useState(() => {
+  const finalPrice = appliedCoupon ? appliedCoupon.finalPrice : plan?.price || 0;
+
+  const createPaymentIntent = async (amount: number) => {
+    try {
+      setIsCreatingIntent(true);
+      console.log("Creating payment intent for:", { amount, plan: planType });
+      
+      const { data, error } = await supabase.functions.invoke("create-payment-intent", {
+        body: { amount, plan: planType }
+      });
+
+      console.log("Payment intent response:", { data, error });
+
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw error;
+      }
+      
+      if (data?.clientSecret) {
+        console.log("Setting client secret");
+        setClientSecret(data.clientSecret);
+      } else {
+        console.error("No client secret in response:", data);
+        throw new Error("No client secret received");
+      }
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingIntent(false);
+    }
+  };
+
+  useEffect(() => {
     if (!plan) {
       navigate("/#pricing");
       return;
     }
+    createPaymentIntent(plan.price);
+  }, []);
 
-    // Create payment intent
-    const createPaymentIntent = async () => {
-      try {
-        console.log("Creating payment intent for:", { amount: plan.price, plan: planType });
-        
-        const { data, error } = await supabase.functions.invoke("create-payment-intent", {
-          body: { amount: plan.price, plan: planType }
-        });
-
-        console.log("Payment intent response:", { data, error });
-
-        if (error) {
-          console.error("Supabase function error:", error);
-          throw error;
-        }
-        
-        if (data?.clientSecret) {
-          console.log("Setting client secret");
-          setClientSecret(data.clientSecret);
-        } else {
-          console.error("No client secret in response:", data);
-          throw new Error("No client secret received");
-        }
-      } catch (error) {
-        console.error("Error creating payment intent:", error);
-        toast({
-          title: "Error",
-          description: "Failed to initialize payment. Please try again.",
-          variant: "destructive",
-        });
+  // Recreate payment intent when coupon is applied/removed
+  useEffect(() => {
+    if (plan && !isCreatingIntent) {
+      const newPrice = appliedCoupon ? appliedCoupon.finalPrice : plan.price;
+      if (newPrice > 0) {
+        setClientSecret(null);
+        createPaymentIntent(newPrice);
       }
-    };
+    }
+  }, [appliedCoupon]);
 
-    createPaymentIntent();
-  });
+  const handleCouponApplied = (coupon: CouponData | null) => {
+    setAppliedCoupon(coupon);
+  };
 
   if (!plan) return null;
 
@@ -313,14 +481,19 @@ const CheckoutComplete = () => {
             <p className="text-muted-foreground">Create your account and complete payment in one step</p>
           </div>
 
-          {!stripePublishableKey ? (
-            <Card className="p-8 text-center">
-              <p className="text-destructive mb-4">Stripe is not configured. Please add your Stripe publishable key.</p>
-              <p className="text-sm text-muted-foreground">Contact support for assistance.</p>
-            </Card>
-          ) : clientSecret && stripePromise ? (
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm plan={plan} planType={planType} />
+          {/* Coupon Input */}
+          <div className="mb-6">
+            <CouponInput originalPrice={plan.price} onCouponApplied={handleCouponApplied} />
+          </div>
+
+          {clientSecret && stripePromise ? (
+            <Elements stripe={stripePromise} options={{ clientSecret }} key={clientSecret}>
+              <CheckoutForm 
+                plan={plan} 
+                planType={planType} 
+                appliedCoupon={appliedCoupon}
+                finalPrice={finalPrice}
+              />
             </Elements>
           ) : (
             <div className="flex items-center justify-center py-12">
