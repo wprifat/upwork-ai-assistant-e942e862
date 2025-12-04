@@ -13,8 +13,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { z } from "zod";
 
-const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
+const stripePublishableKey = "pk_live_51SaSphGb80lvwjwT4AlFaSjECMerhnO0jHrFTwLKGbCOvpbhp4A6YGYcLqoZcdH2rbQl84nXmVUoRDQG52xi3nDe005kPvhekE";
+const stripePromise = loadStripe(stripePublishableKey);
 
 const plans = {
   lifetime: {
