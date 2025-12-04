@@ -70,7 +70,6 @@ serve(async (req) => {
         stripe_coupon_id: stripeCoupon.id,
         max_uses: max_uses || null,
         valid_until: valid_until || null,
-        created_by: userData.user.id,
       })
       .select()
       .single();
