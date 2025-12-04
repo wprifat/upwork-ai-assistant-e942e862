@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { z } from "zod";
@@ -210,6 +211,7 @@ const CheckoutForm = ({ plan, planType, appliedCoupon, finalPrice }: CheckoutFor
               </button>
             </div>
             {errors.password && <p className="text-sm text-destructive mt-1">{errors.password}</p>}
+            <PasswordStrengthIndicator password={formData.password} className="mt-2" />
           </div>
 
           <div>
