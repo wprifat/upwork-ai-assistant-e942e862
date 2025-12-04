@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
 import { z } from "zod";
 
 // Validation schemas
@@ -343,9 +344,7 @@ const Auth = () => {
                     </button>
                   </div>
                   {!isLogin && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Must be at least 8 characters
-                    </p>
+                    <PasswordStrengthIndicator password={password} className="mt-2" />
                   )}
                 </div>
 

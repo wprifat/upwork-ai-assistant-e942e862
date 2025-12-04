@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Lock, Eye, EyeOff } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
 import { z } from "zod";
 
 const passwordSchema = z.string().min(8, { message: "Password must be at least 8 characters" }).max(72);
@@ -132,9 +133,7 @@ const ResetPassword = () => {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Must be at least 8 characters
-                </p>
+                <PasswordStrengthIndicator password={password} className="mt-2" />
               </div>
 
               <div>
