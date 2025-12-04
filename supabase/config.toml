@@ -15,6 +15,9 @@ verify_jwt = false
 [functions.create-coupon]
 verify_jwt = false
 
+[functions.validate-coupon]
+verify_jwt = false
+
 [functions.send-profile-welcome]
 verify_jwt = false
 
